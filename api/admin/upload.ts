@@ -17,6 +17,17 @@ import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { hasValidSession, requireSession } from '../_lib/auth.js';
 import { handler, json, methodNotAllowed, noStore } from '../_lib/http.js';
 
+/*
+  SVG is deliberately absent: it can carry script, and blob storage serves files
+  inline, so an uploaded SVG would be stored XSS on the storage origin.
+
+  Known limit: this list filters the content type the BROWSER declares — nothing
+  sniffs magic bytes — so an authenticated caller could store arbitrary bytes
+  labelled `image/png`. The blob is then served with that declared type, and the
+  `X-Content-Type-Options: nosniff` header set in vercel.json stops a browser
+  re-interpreting it as HTML. Behind admin auth plus nosniff, the residual is
+  accepted rather than unnoticed.
+*/
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
 
 export default handler(async (req: VercelRequest, res: VercelResponse) => {

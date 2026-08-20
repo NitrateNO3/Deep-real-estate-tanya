@@ -24,7 +24,9 @@ admin/include/dbc.php.local
 .local-api/
 .local-db/
 
-# local env for `vercel dev` — never commit DATABASE_URL or the admin hash
-.env
-.env.local
+# local env for `vercel dev` — never commit DATABASE_URL or the admin hash.
+# Glob rather than the two literal names: .env.production / .env.staging and
+# friends were not covered before, and a missed one is a leaked credential.
+.env*
+!.env.example
 .vercel/

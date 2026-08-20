@@ -41,12 +41,15 @@ function inline(text: string, key = 0): ReactNode[] {
       // Only http(s), mailto and tel — an author pasting a javascript: URL should
       // not produce a working link.
       const safe = /^(https?:|mailto:|tel:|\/|#)/i.test(href) ? href : '#';
+      /* Case-insensitive: an author writing HTTPS:// would otherwise get a
+         new-tab link without rel="noopener" — reverse tabnabbing. */
+      const external = /^https?:/i.test(safe);
       out.push(
         <a
           key={i++}
           href={safe}
           className="underline underline-offset-2 hover:opacity-80"
-          {...(safe.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         >
           {label}
         </a>,

@@ -1,0 +1,35 @@
+# Dependency updates.
+#
+# There was no automated scanning before this file, which is how @vercel/blob
+# sat on a version pulling undici with nine advisories (request smuggling, CRLF
+# injection, cookie-attribute injection) without anything raising it.
+#
+# Two npm ecosystems because the repo has two package.json files: the serverless
+# API at the root and the React app in ui/.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # One PR for routine bumps; anything major still lands on its own so a
+      # breaking change is never buried in a batch.
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: npm
+    directory: "/ui"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly

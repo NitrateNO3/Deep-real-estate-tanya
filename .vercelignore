@@ -22,7 +22,10 @@ style.css
 # Pre-rendered snapshot of the old site, built from fake data
 static/
 
-# Local test harness — an in-process database and the API compiled for it
+# Local test harness — an in-process database and the API compiled for it.
+# scripts/ is included here too: nothing on Vercel executes it, so uploading the
+# dev server (which carries a fixed development password) is needless surface.
+scripts/
 .local-api/
 .local-db/
 .selfcheck/

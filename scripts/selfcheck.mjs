@@ -12,9 +12,10 @@
 */
 import assert from 'node:assert/strict';
 
-const { hashPassword, verifyPassword, createSessionToken, verifySessionToken } = await import(
-  '../.selfcheck/_lib/auth.js'
-);
+const {
+  hashPassword, verifyPassword, createSessionToken, verifySessionToken,
+  setSessionCookie, clearSessionCookie,
+} = await import('../.selfcheck/_lib/auth.js');
 const { propertyInput, noticeInput, blogInput } = await import('../.selfcheck/_lib/validate.js');
 
 process.env.SESSION_SECRET ??= 'test-secret-that-is-long-enough';
@@ -95,6 +96,71 @@ check('rejects a non-list where a list belongs', () =>
   assert.throws(() => propertyInput({ name: 'X', location: 'Y', features: 'nope' }, { withId: false })));
 check('defaults published to false', () =>
   assert.equal(propertyInput({ name: 'X', location: 'Y' }, { withId: false }).published, false));
+
+console.log('\nsession cookie attributes');
+/* Capture what Set-Cookie would actually contain, in both environments. The
+   __Host- prefix is what stops a sibling subdomain planting a session cookie,
+   and browsers only honour it when Secure + Path=/ + no Domain are all present —
+   so the three have to be asserted together, not assumed. */
+const cookieFor = (vercelEnv) => {
+  const before = process.env.VERCEL_ENV;
+  if (vercelEnv === undefined) delete process.env.VERCEL_ENV;
+  else process.env.VERCEL_ENV = vercelEnv;
+  let out = '';
+  setSessionCookie({}, { setHeader: (_k, v) => { out = v; } }, 'tok');
+  if (before === undefined) delete process.env.VERCEL_ENV;
+  else process.env.VERCEL_ENV = before;
+  return out;
+};
+
+const prodCookie = cookieFor('production');
+check('production uses the __Host- prefix', () =>
+  assert.match(prodCookie, /^__Host-dre_session=/));
+check('production sets Secure', () => assert.match(prodCookie, /; Secure/));
+check('sets HttpOnly', () => assert.match(prodCookie, /; HttpOnly/));
+check('sets SameSite=Strict', () => assert.match(prodCookie, /; SameSite=Strict/));
+check('sets Path=/ (required by __Host-)', () => assert.match(prodCookie, /; Path=\//));
+check('sets no Domain (required by __Host-)', () =>
+  assert.equal(/; *Domain=/i.test(prodCookie), false));
+check('local dev drops the prefix and Secure (plain http)', () => {
+  const dev = cookieFor(undefined);
+  assert.match(dev, /^dre_session=/);
+  assert.equal(/; Secure/.test(dev), false);
+});
+check('logout expires the cookie', () => {
+  let out = '';
+  clearSessionCookie({}, { setHeader: (_k, v) => { out = v; } });
+  assert.match(out, /Max-Age=0/);
+});
+
+console.log('\nbounds and URL schemes (security hardening)');
+check('sortOrder rejects 1e300 (Number.isInteger accepts it)', () =>
+  assert.throws(() => propertyInput({ name: 'X', location: 'Y', sortOrder: 1e300 }, { withId: false })));
+check('sortOrder rejects an out-of-range integer', () =>
+  assert.throws(() => propertyInput({ name: 'X', location: 'Y', sortOrder: 99999999 }, { withId: false })));
+check('sortOrder rejects an array that Number() would coerce', () =>
+  assert.throws(() => propertyInput({ name: 'X', location: 'Y', sortOrder: ['5'] }, { withId: false })));
+check('sortOrder still accepts a sane value', () =>
+  assert.equal(propertyInput({ name: 'X', location: 'Y', sortOrder: 3 }, { withId: false }).sortOrder, 3));
+check('image rejects a javascript: URL', () =>
+  assert.throws(() => propertyInput({ name: 'X', location: 'Y', image: 'javascript:alert(1)' }, { withId: false })));
+check('image rejects free-form text', () =>
+  assert.throws(() => propertyInput({ name: 'X', location: 'Y', image: 'not a url' }, { withId: false })));
+check('image accepts https and site-relative', () => {
+  const a = propertyInput({ name: 'X', location: 'Y', image: 'https://x.test/a.jpg' }, { withId: false });
+  const b = propertyInput({ name: 'X', location: 'Y', image: '/img/props/a.jpg' }, { withId: false });
+  assert.equal(a.image, 'https://x.test/a.jpg');
+  assert.equal(b.image, '/img/props/a.jpg');
+});
+check('gallery entries are scheme-checked too', () =>
+  assert.throws(() => propertyInput(
+    { name: 'X', location: 'Y', images: ['/ok.jpg', 'javascript:alert(1)'] }, { withId: false })));
+check('blog coverImage is scheme-checked', () =>
+  assert.throws(() => blogInput({ slug: 'a-post', title: 'T', coverImage: 'javascript:alert(1)' })));
+check('dates are normalised to ISO, not passed through raw', () => {
+  const out = noticeInput({ body: 'x', startsAt: 'March 3, 2025 10:00 UTC' });
+  assert.match(out.startsAt, /^\d{4}-\d{2}-\d{2}T/);
+});
 
 console.log('\nnotice + blog input');
 check('notice requires a body', () => assert.throws(() => noticeInput({}), /body/));

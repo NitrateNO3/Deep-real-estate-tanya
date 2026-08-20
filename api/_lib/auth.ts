@@ -19,7 +19,19 @@ import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypt
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { json } from './http.js';
 
-const COOKIE_NAME = 'dre_session';
+/*
+  The __Host- prefix is a browser-enforced guarantee, not decoration: a cookie
+  named this way is only accepted when it is Secure, Path=/ and has no Domain —
+  which means a sibling subdomain cannot set it. Without the prefix, anything
+  running on another subdomain could push its own `dre_session` for the parent
+  domain and the browser would send it here (cookie tossing / session fixation).
+  The cookie already met every requirement, so this costs one string.
+
+  Browsers only apply the rule over HTTPS, so plain-http localhost keeps the
+  bare name — hence two constants rather than one.
+*/
+const COOKIE_SECURE_NAME = '__Host-dre_session';
+const COOKIE_DEV_NAME = 'dre_session';
 /** Eight hours: long enough for a working session, short enough to matter. */
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 
@@ -99,34 +111,52 @@ export function verifySessionToken(token: string | undefined, now = Date.now()):
 
 /* -------------------------------------------------------------------- cookie */
 
-/* Secure is required in production but would stop the cookie being stored over
-   plain http on localhost, which is how `vercel dev` runs. */
-function isSecureRequest(req: VercelRequest): boolean {
-  const host = String(req.headers.host ?? '');
-  if (host.startsWith('localhost') || host.startsWith('127.0.0.1')) return false;
-  return true;
+/*
+  Secure is required everywhere except plain-http local development.
+
+  This used to be decided from the request's `Host` header — a value the client
+  sends. It was safe only because Vercel's edge rejects hosts not attached to the
+  deployment, i.e. the guarantee came from the platform rather than from this
+  code. VERCEL_ENV is set by the runtime and cannot be influenced by a request,
+  so the attribute no longer keys on untrusted input.
+*/
+function isSecureContext(): boolean {
+  return process.env.VERCEL_ENV !== undefined && process.env.VERCEL_ENV !== 'development';
 }
 
-export function setSessionCookie(req: VercelRequest, res: VercelResponse, token: string) {
-  const bits = [
-    `${COOKIE_NAME}=${token}`,
-    'Path=/',
-    'HttpOnly',
-    'SameSite=Strict',
-    `Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`,
-  ];
-  if (isSecureRequest(req)) bits.push('Secure');
-  res.setHeader('Set-Cookie', bits.join('; '));
+const cookieName = () => (isSecureContext() ? COOKIE_SECURE_NAME : COOKIE_DEV_NAME);
+
+function cookieAttributes(): string[] {
+  // Path=/ and no Domain are also what the __Host- prefix requires.
+  const bits = ['Path=/', 'HttpOnly', 'SameSite=Strict'];
+  if (isSecureContext()) bits.push('Secure');
+  return bits;
 }
 
-export function clearSessionCookie(req: VercelRequest, res: VercelResponse) {
-  const bits = [`${COOKIE_NAME}=`, 'Path=/', 'HttpOnly', 'SameSite=Strict', 'Max-Age=0'];
-  if (isSecureRequest(req)) bits.push('Secure');
-  res.setHeader('Set-Cookie', bits.join('; '));
+export function setSessionCookie(_req: VercelRequest, res: VercelResponse, token: string) {
+  res.setHeader(
+    'Set-Cookie',
+    [
+      `${cookieName()}=${token}`,
+      ...cookieAttributes(),
+      `Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`,
+    ].join('; '),
+  );
+}
+
+export function clearSessionCookie(_req: VercelRequest, res: VercelResponse) {
+  res.setHeader(
+    'Set-Cookie',
+    [`${cookieName()}=`, ...cookieAttributes(), 'Max-Age=0'].join('; '),
+  );
 }
 
 export function hasValidSession(req: VercelRequest): boolean {
-  return verifySessionToken(req.cookies?.[COOKIE_NAME]);
+  /* Read the prefixed name first. Both are checked so a session issued either
+     side of a deploy still works, and because a __Host- cookie cannot be forged
+     by a subdomain, preferring it is safe. */
+  const jar = req.cookies ?? {};
+  return verifySessionToken(jar[COOKIE_SECURE_NAME] ?? jar[COOKIE_DEV_NAME]);
 }
 
 /*

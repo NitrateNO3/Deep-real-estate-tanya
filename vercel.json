@@ -4,5 +4,41 @@
   "installCommand": "npm install && npm --prefix ui install",
   "buildCommand": "npm --prefix ui run build",
   "outputDirectory": "ui/dist",
-  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "//": "The admin panel was framable until this line existed. frame-ancestors in the CSP below is the modern equivalent; both are sent because older browsers only honour this one.",
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "//": "Pairs with the upload route: a blob's content type is declared by the client, so a payload mislabelled image/png must never be sniffed into HTML.",
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "//": "Vercel already redirects to HTTPS; this is what stops the first request being made over http at all. Two years, subdomains included.",
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "//": "Nothing here uses a camera, a microphone or location. Say so, so an injected script cannot ask either.",
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        },
+        {
+          "//": "Every source below is one the site genuinely loads: OpenStreetMap tiles for the Leaflet map, the R2 bucket for the globe texture, Vercel Blob for uploaded photographs (both displaying them and the browser uploading straight to it), and the Office viewer iframe on the documents page. style-src needs 'unsafe-inline' because Tailwind v4 and framer-motion both write inline styles — claiming otherwise would just ship a policy that breaks the site.",
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; media-src 'self'; img-src 'self' data: blob: https://*.public.blob.vercel-storage.com https://tile.openstreetmap.org https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev; connect-src 'self' https://blob.vercel-storage.com https://*.public.blob.vercel-storage.com; frame-src https://view.officeapps.live.com; upgrade-insecure-requests"
+        }
+      ]
+    }
+  ]
 }

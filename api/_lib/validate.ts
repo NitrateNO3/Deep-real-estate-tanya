@@ -44,12 +44,36 @@ function bool(src: Json, key: string, fallback = false): boolean {
   return v;
 }
 
-function int(src: Json, key: string, fallback = 0): number {
+/*
+  `Number.isInteger` alone reads like a bounds check and is not one: it accepts
+  1e300, and `Number()` happily coerces `["5"]` and `true`. A value like that
+  passes validation and then blows up against an `integer` column as a 500.
+  Require a real number, a safe integer, and an explicit range.
+*/
+function int(src: Json, key: string, { fallback = 0, min = -1e6, max = 1e6 } = {}): number {
   const v = src[key];
   if (v === undefined || v === null || v === '') return fallback;
+  if (typeof v !== 'number' && typeof v !== 'string') {
+    throw badRequest(`"${key}" must be a whole number`);
+  }
   const n = Number(v);
-  if (!Number.isInteger(n)) throw badRequest(`"${key}" must be a whole number`);
+  if (!Number.isSafeInteger(n)) throw badRequest(`"${key}" must be a whole number`);
+  if (n < min || n > max) throw badRequest(`"${key}" must be between ${min} and ${max}`);
   return n;
+}
+
+/*
+  Stored URLs are written into `src` attributes. `img src` is not a
+  script-executing context, so this is hygiene rather than an XSS fix — but a
+  stored URL should still be a real http(s) address or a site-relative path, not
+  arbitrary text.
+*/
+function urlish(value: string, key: string): string {
+  if (value === '') return '';
+  if (!/^(https?:\/\/|\/)/i.test(value)) {
+    throw badRequest(`"${key}" must be an http(s) address or start with "/"`);
+  }
+  return value;
 }
 
 function strArray(src: Json, key: string, { max = 100, itemMax = 5000 } = {}): string[] {
@@ -88,12 +112,16 @@ export function slug(src: Json, key: string): string {
   return s;
 }
 
+/* Normalised to ISO rather than passed through: JavaScript accepts date strings
+   Postgres rejects, so handing the raw text on turns a bad date into a 500
+   instead of a 400. */
 function dateOrNull(src: Json, key: string): string | null {
   const v = src[key];
   if (v === undefined || v === null || v === '') return null;
   if (typeof v !== 'string') throw badRequest(`"${key}" must be a date string`);
-  if (Number.isNaN(Date.parse(v))) throw badRequest(`"${key}" is not a valid date`);
-  return v;
+  const parsed = Date.parse(v);
+  if (Number.isNaN(parsed)) throw badRequest(`"${key}" is not a valid date`);
+  return new Date(parsed).toISOString();
 }
 
 /* ------------------------------------------------------------------ payloads */
@@ -102,12 +130,14 @@ export type PropertyInput = ReturnType<typeof propertyInput>;
 
 export function propertyInput(body: unknown, { withId }: { withId: boolean }) {
   const b = asObject(body, 'Body');
-  const images = strArray(b, 'images', { max: 40, itemMax: 500 });
+  const images = strArray(b, 'images', { max: 40, itemMax: 500 }).map((u, i) =>
+    urlish(u, `images[${i}]`),
+  );
 
   // The card image defaults to the first gallery frame, which is the convention
   // the front end already documents ("images[0] is the frame the carousel opens
   // on, and should be the same photograph as image").
-  const image = str(b, 'image', { max: 500 }) || images[0] || '';
+  const image = urlish(str(b, 'image', { max: 500 }), 'image') || images[0] || '';
 
   const out = {
     ...(withId ? { id: slug(b, 'id') } : {}),
@@ -125,7 +155,7 @@ export function propertyInput(body: unknown, { withId }: { withId: boolean }) {
     description: strArray(b, 'description', { max: 40 }),
     features: strArray(b, 'features', { max: 60, itemMax: 500 }),
     published: bool(b, 'published', false),
-    sortOrder: int(b, 'sortOrder', 0),
+    sortOrder: int(b, 'sortOrder', { fallback: 0, min: -10_000, max: 10_000 }),
   };
 
   return out as typeof out & { id?: string };
@@ -152,7 +182,10 @@ export function blogInput(body: unknown) {
     slug: slug(b, 'slug'),
     title: str(b, 'title', { required: true, max: 300 }),
     excerpt: str(b, 'excerpt', { max: 600 }),
-    coverImage: optStr(b, 'coverImage', 500),
+    coverImage: (() => {
+      const v = optStr(b, 'coverImage', 500);
+      return v === null ? null : urlish(v, 'coverImage');
+    })(),
     body: str(b, 'body', { max: 100_000 }),
     published: bool(b, 'published', false),
     publishedAt: dateOrNull(b, 'publishedAt'),

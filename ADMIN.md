@@ -65,6 +65,45 @@ Environment Variables*:
 Changing `SESSION_SECRET` signs everyone out immediately — which is how you
 revoke access if the password is ever shared by mistake.
 
+### The kill switch, stated plainly
+
+Sessions carry no id, so there is nothing to revoke individually. **Signing out
+only clears your own browser's cookie — it does not invalidate the token.** A
+cookie copied off a machine stays valid for the rest of its 8 hours.
+
+If you believe a session or the password has been exposed, the actual remedy is:
+
+1. `npm run hash-password` → set the new `ADMIN_PASSWORD_HASH`
+2. **Also replace `SESSION_SECRET`** (the same command prints a fresh one)
+3. Redeploy
+
+Step 2 is the one that matters — it invalidates every outstanding token at once.
+Changing only the password leaves an already-stolen cookie working.
+
+### Least-privilege database role
+
+The API needs to read and write four tables and nothing else. Creating a role
+scoped to exactly that means a leaked `DATABASE_URL` cannot drop tables or read
+the system catalogue. In the Neon SQL editor:
+
+```sql
+CREATE ROLE dre_app LOGIN PASSWORD 'a-long-random-password';
+GRANT CONNECT ON DATABASE neondb TO dre_app;
+GRANT USAGE ON SCHEMA public TO dre_app;
+GRANT SELECT, INSERT, UPDATE, DELETE
+  ON properties, notices, blogs, login_attempts TO dre_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO dre_app;
+```
+
+Then point `DATABASE_URL` at `dre_app` rather than the owner role. Run
+`npm run db:setup` **before** switching, since creating tables needs the owner.
+
+> Row-level security is deliberately not used. RLS earns its keep when untrusted
+> clients hold a database key and connect directly. Here only the serverless
+> functions ever open a connection, there is one owner and no tenants — policies
+> would guard a door nobody can reach. The role above addresses the real risk
+> (a leaked connection string) more directly.
+
 ---
 
 ## Running it locally
