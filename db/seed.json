@@ -1,0 +1,88 @@
+[
+  {
+    "id": "suncity-floors",
+    "propertyId": "112",
+    "name": "4 BHK Luxury Floors – Suncity",
+    "location": "D Block, Suncity, Gurugram, Haryana, India",
+    "address": "D-BLOCK, SHIV SHAKTI-3, Suncity, Sector 54, Gurugram, Haryana 122011, India",
+    "price": "₹5.50 Cr",
+    "priceUnit": "from ₹4.60 Cr",
+    "badge": "For Sale · Residential",
+    "image": "/img/props/suncity-3.jpg",
+    "images": [
+      "/img/props/suncity-3.jpg",
+      "/img/props/suncity-1.jpg",
+      "/img/props/suncity-2.jpg"
+    ],
+    "specs": [
+      { "label": "Beds", "value": "4" },
+      { "label": "Baths", "value": "4" },
+      { "label": "SqFt", "value": "2,664" }
+    ],
+    "overview": [
+      { "label": "Type", "value": "Apartment · Residential" },
+      { "label": "Bedrooms", "value": "4" },
+      { "label": "Bathrooms", "value": "4" },
+      { "label": "Built-up area", "value": "2,664 SqFt" },
+      { "label": "Plot size", "value": "296 sq. yards" },
+      { "label": "Builder", "value": "Independent Builder" },
+      { "label": "Corner property", "value": "Yes" },
+      { "label": "Status", "value": "For Sale" }
+    ],
+    "description": [
+      "Located in the premium Suncity neighborhood, these 4 BHK luxury floors offer spacious layouts and premium finishes. The 4th floor comes with an exclusive private terrace — perfect for entertaining or a rooftop garden.",
+      "The corner positioning ensures excellent ventilation and natural light, and the location is close to schools, hospitals and shopping."
+    ],
+    "features": [
+      "Spacious layouts, premium finishes",
+      "Dedicated guest waiting area",
+      "Servant quarters",
+      "Ample parking",
+      "Private terrace (4th floor)",
+      "Corner positioning, excellent ventilation"
+    ],
+    "published": true,
+    "sortOrder": 0
+  },
+  {
+    "id": "farmhouse-garatpurbas",
+    "propertyId": "113",
+    "name": "Premium Farmhouse – Garat Pur Bas",
+    "location": "Village Garat Pur Bas, Gurugram, Haryana, India",
+    "address": "Village Garat Pur Bas, Gurugram, Haryana, India",
+    "price": "On call",
+    "priceUnit": "₹30,000 / sq. yard",
+    "badge": "For Sale · Farmhouse",
+    "image": "/img/props/farmhouse-garatpurbas.jpg",
+    "images": [
+      "/img/props/farmhouse-garatpurbas.jpg",
+      "/img/props/p2.jpg"
+    ],
+    "specs": [
+      { "label": "Plot", "value": "3,000 sq. yards" },
+      { "label": "Road", "value": "30 m" }
+    ],
+    "overview": [
+      { "label": "Type", "value": "Farmhouse Plot · Residential" },
+      { "label": "Plot size", "value": "3,000 sq. yards" },
+      { "label": "Road width", "value": "30 m" },
+      { "label": "Rate", "value": "₹30,000 / sq. yard" },
+      { "label": "Builder", "value": "Independent" },
+      { "label": "Status", "value": "For Sale" }
+    ],
+    "description": [
+      "A three-thousand square yard farmhouse plot at Garat Pur Bas, on a thirty-metre road. Quoted per square yard rather than as a lump sum, so the plot can be taken in part.",
+      "Suited to a weekend house or a long hold — the belt has been steadily absorbed by the city over the last decade."
+    ],
+    "features": [
+      "30 m road frontage",
+      "Boundary wall in place",
+      "Electricity connection",
+      "Borewell on site",
+      "Clear title, complete documentation",
+      "Divisible — can be taken in part"
+    ],
+    "published": true,
+    "sortOrder": 1
+  }
+]

@@ -16,3 +16,11 @@ admin/include/dbc.php.local
 
 # static-export build workspace
 .static-build-tmp/
+
+# compiled API, produced by `npm run selfcheck`
+.selfcheck/
+
+# local env for `vercel dev` — never commit DATABASE_URL or the admin hash
+.env
+.env.local
+.vercel/

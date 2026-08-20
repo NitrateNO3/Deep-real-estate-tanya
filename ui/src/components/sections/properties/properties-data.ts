@@ -174,6 +174,27 @@ export const allProperties: PropertyDetail[] = featuredProperties;
 
 checkProperties(allProperties);
 
+/*
+  Replaces the shipped listings with the ones the owner has published, once they
+  have been fetched from /api/properties (see src/lib/content.ts).
+
+  The contents are swapped **in place** rather than the binding being reassigned,
+  and that is deliberate. Every section takes its listings as a default parameter
+  — `items = featuredProperties` — which JavaScript evaluates on each render, not
+  once at import. Mutating the array those defaults already point at therefore
+  makes all of them live, without threading a prop through the demos, the home
+  page and the index.
+
+  The listings above remain the fallback: what the site shows before the first
+  fetch returns, and what it keeps showing if the API cannot be reached.
+*/
+export function syncProperties(next: PropertyDetail[]) {
+  if (!next.length) return;              // never blank the site with an empty answer
+  featuredProperties.length = 0;
+  featuredProperties.push(...next);
+  checkProperties(featuredProperties);
+}
+
 /** The hash a card points at. One page per property, registered in registry.tsx. */
 export const propertyPageId = (id: string | number) => `property-${id}`;
 export const propertyHref = (id: string | number) => `#${propertyPageId(id)}`;

@@ -1,0 +1,19 @@
+{
+  "//": "Covers the serverless API only. The React app has its own config in ui/.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": ["api/**/*.ts"],
+  "exclude": ["node_modules", "ui", "oldWebsite", "static", "admin"]
+}
