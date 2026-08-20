@@ -11,13 +11,16 @@
     "hash-password": "node scripts/hash-password.mjs",
     "db:setup": "node scripts/db-setup.mjs",
     "typecheck:api": "tsc -p tsconfig.json --noEmit",
-    "selfcheck": "tsc -p tsconfig.json --noEmit false --outDir .selfcheck --declaration false && node scripts/selfcheck.mjs"
+    "selfcheck": "tsc -p tsconfig.json --noEmit false --outDir .selfcheck --declaration false && node scripts/selfcheck.mjs",
+    "dev:build-api": "tsc -p tsconfig.json --noEmit false --outDir .local-api --declaration false",
+    "dev:local": "npm run dev:build-api && node scripts/dev-server.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
     "@vercel/blob": "^0.27.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.2.17",
     "@vercel/node": "^5.0.0",
     "typescript": "^5.7.0"
   }

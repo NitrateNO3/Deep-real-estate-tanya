@@ -46,11 +46,19 @@ export function handler(
   };
 }
 
-/** Public GET responses may be cached briefly at the edge; admin ones never. */
+/*
+  Public GET responses may be cached briefly at the edge; admin ones never.
+
+  `max-age=0` is the important part: it applies to the *browser*, forcing it to
+  revalidate on every load, while `s-maxage` still lets the CDN absorb the
+  traffic. Without it the visitor's own cache serves a stale copy — and with
+  stale-while-revalidate that meant a notice the owner had just taken down could
+  keep showing for minutes on a page they had already visited.
+*/
 export function publicCache(res: VercelResponse, seconds = 60) {
   res.setHeader(
     'Cache-Control',
-    `public, s-maxage=${seconds}, stale-while-revalidate=${seconds * 5}`,
+    `public, max-age=0, s-maxage=${seconds}, stale-while-revalidate=${seconds * 5}`,
   );
 }
 

@@ -152,6 +152,64 @@ export const deleteBlog = (id: number) =>
 
 /* ----------------------------------------------------------------- upload */
 
+/** Longest edge kept, in pixels. The gallery never renders anywhere near this. */
+const MAX_EDGE = 2000;
+const JPEG_QUALITY = 0.82;
+/** Below this, resizing is not worth the quality loss. */
+const SKIP_UNDER_BYTES = 300 * 1024;
+
+/*
+  Shrinks a photograph before it is uploaded.
+
+  A phone camera produces ~4000px, 5-10 MB files; the largest the site ever
+  displays one is about 1600px. Uploading the original would burn through the
+  1 GB free tier in ~100 listings for no visible benefit — this typically turns
+  8 MB into a few hundred KB with no difference on screen.
+
+  Anything it cannot handle is passed through untouched rather than blocked:
+  HEIC in particular is not decodable in every browser, and a failed resize must
+  never stop the owner adding a photograph. The server keeps a 10 MB cap for
+  those.
+*/
+export async function prepareImage(file: File): Promise<File> {
+  // Canvas would flatten an animated GIF to a single frame.
+  if (file.type === 'image/gif' || file.size < SKIP_UNDER_BYTES) return file;
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+
+    // Already small enough, and re-encoding would only lose quality.
+    if (scale === 1 && file.type === 'image/jpeg') {
+      bitmap.close();
+      return file;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      bitmap.close();
+      return file;
+    }
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY),
+    );
+    // Flat graphics (a logo, a floor plan) can come out larger as JPEG.
+    if (!blob || blob.size >= file.size) return file;
+
+    const name = file.name.replace(/\.[^./\\]+$/, '') + '.jpg';
+    return new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+  } catch {
+    return file;                       // undecodable — let the original through
+  }
+}
+
 /*
   Goes straight from the browser to Vercel Blob, with /api/admin/upload only
   minting the token. A serverless request body is capped at 4.5 MB and a photo
@@ -159,9 +217,21 @@ export const deleteBlog = (id: number) =>
   fail on exactly the files the owner most wants to upload.
 */
 export async function uploadImage(file: File): Promise<string> {
-  const result = await upload(file.name, file, {
+  const prepared = await prepareImage(file);
+  const result = await upload(prepared.name, prepared, {
     access: 'public',
     handleUploadUrl: '/api/admin/upload',
   });
+  // Lets the storage meter move as photographs are added, without the uploader
+  // and the meter having to know about each other.
+  window.dispatchEvent(new Event(UPLOAD_EVENT));
   return result.url;
 }
+
+export const UPLOAD_EVENT = 'dre:blob-uploaded';
+
+export type StorageUsage =
+  | { available: false }
+  | { available: true; usedBytes: number; limitBytes: number; fileCount: number };
+
+export const getStorage = () => request<StorageUsage>('/api/admin/storage');

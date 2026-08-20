@@ -1,11 +1,12 @@
 /* Property CRUD — the list, and the form behind it. */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ApiError, createProperty, deleteProperty, listProperties, updateProperty,
   type AdminProperty,
 } from './api';
 import {
-  Banner, Button, Card, Checkbox, FactList, Field, ImageList, Input, StringList,
+  Banner, Button, Card, Checkbox, FactList, Field, ImageList, Input, ListControls,
+  StringList, type StatusFilter,
 } from './admin-ui';
 
 /** A blank listing. Kept in one place so "new" and "reset" cannot drift apart. */
@@ -46,6 +47,33 @@ export function PropertiesAdmin({ onExpired }: { onExpired: () => void }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState<StatusFilter>('all');
+
+  const counts = useMemo(
+    () => ({
+      all: items.length,
+      published: items.filter((p) => p.published).length,
+      draft: items.filter((p) => !p.published).length,
+    }),
+    [items],
+  );
+
+  /* Filtered in the browser: the whole list arrives in one request, so a search
+     endpoint would add a round trip per keystroke and no accuracy. */
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((p) => {
+      if (status === 'published' && !p.published) return false;
+      if (status === 'draft' && p.published) return false;
+      if (!q) return true;
+      return (
+        p.name.toLowerCase().includes(q) ||
+        p.location.toLowerCase().includes(q) ||
+        p.id.toLowerCase().includes(q)
+      );
+    });
+  }, [items, query, status]);
 
   const fail = (e: unknown) => {
     if (e instanceof ApiError && e.unauthorised) return onExpired();
@@ -232,6 +260,17 @@ export function PropertiesAdmin({ onExpired }: { onExpired: () => void }) {
       {error && <Banner kind="error">{error}</Banner>}
       {notice && <Banner kind="success">{notice}</Banner>}
 
+      {!loading && items.length > 0 && (
+        <ListControls
+          query={query}
+          onQuery={setQuery}
+          status={status}
+          onStatus={setStatus}
+          counts={counts}
+          placeholder="Search by name, locality or page address…"
+        />
+      )}
+
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : items.length === 0 ? (
@@ -240,9 +279,24 @@ export function PropertiesAdmin({ onExpired }: { onExpired: () => void }) {
             No properties yet. Add the first one with the button above.
           </p>
         </Card>
+      ) : visible.length === 0 ? (
+        /* Distinct from "nothing here yet" — there are properties, they are just
+           filtered out, and the way back needs to be obvious. */
+        <Card className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">No properties match that search.</p>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setQuery('');
+              setStatus('all');
+            }}
+          >
+            Clear filters
+          </Button>
+        </Card>
       ) : (
         <div className="flex flex-col gap-2">
-          {items.map((p) => (
+          {visible.map((p) => (
             <Card key={p.id} className="flex flex-wrap items-center gap-4">
               <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-muted">
                 {p.image && <img src={p.image} alt="" className="size-full object-cover" />}

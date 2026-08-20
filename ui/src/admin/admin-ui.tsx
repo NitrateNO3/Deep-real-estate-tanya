@@ -114,6 +114,78 @@ export function Banner({ kind, children }: { kind: 'error' | 'success'; children
   );
 }
 
+export type StatusFilter = 'all' | 'published' | 'draft';
+
+/*
+  Search box + status pills for the list screens.
+
+  Filtering is done in the caller over the already-fetched array — the whole list
+  arrives in one request, so searching the server per keystroke would be slower
+  and no more correct.
+*/
+export function ListControls({
+  query,
+  onQuery,
+  status,
+  onStatus,
+  counts,
+  placeholder,
+}: {
+  query: string;
+  onQuery: (v: string) => void;
+  status: StatusFilter;
+  onStatus: (v: StatusFilter) => void;
+  counts: { all: number; published: number; draft: number };
+  placeholder: string;
+}) {
+  const pills: { id: StatusFilter; label: string }[] = [
+    { id: 'all', label: 'All' },
+    { id: 'published', label: 'Published' },
+    { id: 'draft', label: 'Drafts' },
+  ];
+
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <div className="relative min-w-56 flex-1">
+        <Input
+          value={query}
+          placeholder={placeholder}
+          onChange={(e) => onQuery(e.target.value)}
+          className="pr-8"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => onQuery('')}
+            aria-label="Clear search"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+      <div className="flex gap-1">
+        {pills.map((p) => (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => onStatus(p.id)}
+            className={cn(
+              'rounded-lg px-3 py-1.5 text-sm transition',
+              status === p.id
+                ? 'bg-foreground text-background'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+            )}
+          >
+            {p.label}{' '}
+            <span className="opacity-60">{counts[p.id]}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** A list of plain strings — paragraphs, features. */
 export function StringList({
   values,

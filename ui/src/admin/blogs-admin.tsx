@@ -1,9 +1,12 @@
 /* Blog articles — title, cover, body, and its own page. */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ApiError, createBlog, deleteBlog, listBlogs, updateBlog, type AdminBlog,
 } from './api';
-import { Banner, Button, Card, Checkbox, Field, Input, Textarea } from './admin-ui';
+import {
+  Banner, Button, Card, Checkbox, Field, Input, ListControls, Textarea,
+  type StatusFilter,
+} from './admin-ui';
 import { uploadImage } from './api';
 
 const empty = (): AdminBlog => ({
@@ -34,6 +37,31 @@ export function BlogsAdmin({ onExpired }: { onExpired: () => void }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState<StatusFilter>('all');
+
+  const counts = useMemo(
+    () => ({
+      all: items.length,
+      published: items.filter((b) => b.published).length,
+      draft: items.filter((b) => !b.published).length,
+    }),
+    [items],
+  );
+
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((b) => {
+      if (status === 'published' && !b.published) return false;
+      if (status === 'draft' && b.published) return false;
+      if (!q) return true;
+      return (
+        b.title.toLowerCase().includes(q) ||
+        b.excerpt.toLowerCase().includes(q) ||
+        b.slug.toLowerCase().includes(q)
+      );
+    });
+  }, [items, query, status]);
 
   const fail = (e: unknown) => {
     if (e instanceof ApiError && e.unauthorised) return onExpired();
@@ -170,15 +198,39 @@ export function BlogsAdmin({ onExpired }: { onExpired: () => void }) {
 
       {error && <Banner kind="error">{error}</Banner>}
 
+      {!loading && items.length > 0 && (
+        <ListControls
+          query={query}
+          onQuery={setQuery}
+          status={status}
+          onStatus={setStatus}
+          counts={counts}
+          placeholder="Search by title, summary or page address…"
+        />
+      )}
+
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : items.length === 0 ? (
         <Card>
           <p className="text-sm text-muted-foreground">No articles yet.</p>
         </Card>
+      ) : visible.length === 0 ? (
+        <Card className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">No articles match that search.</p>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setQuery('');
+              setStatus('all');
+            }}
+          >
+            Clear filters
+          </Button>
+        </Card>
       ) : (
         <div className="flex flex-col gap-2">
-          {items.map((b) => (
+          {visible.map((b) => (
             <Card key={b.id} className="flex flex-wrap items-center gap-4">
               <div className="size-16 shrink-0 overflow-hidden rounded-lg bg-muted">
                 {b.coverImage && <img src={b.coverImage} alt="" className="size-full object-cover" />}

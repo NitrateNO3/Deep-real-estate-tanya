@@ -35,7 +35,11 @@ export default handler(async (req: VercelRequest, res: VercelResponse) => {
         // Keeps a re-uploaded "photo.jpg" from overwriting an earlier one that a
         // published listing is still pointing at.
         addRandomSuffix: true,
-        maximumSizeInBytes: 25 * 1024 * 1024,
+        /* A backstop, not the normal path: the panel downscales photographs to
+           ~2000px before they get here, which puts a phone photo in the low
+           hundreds of KB. Anything still above 10 MB skipped that step (an
+           undecodable format, say) and is too large to be worth storing. */
+        maximumSizeInBytes: 10 * 1024 * 1024,
       };
     },
     onUploadCompleted: async () => {

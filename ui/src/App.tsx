@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { buildRegistry } from './registry';
 import { useSiteContent } from './lib/content';
 import { AdminPanel } from './admin/admin-panel';
-import { NoticeStrip } from './components/sections/notices/notice-strip';
 
 type Theme = 'light' | 'dark';
 
@@ -90,13 +89,11 @@ export default function App() {
      as something browsable. Access is decided by the API, not by this branch. */
   if (activeId === 'admin') return <AdminPanel />;
 
+  /* The notice ticker is no longer rendered here. It belongs in the home page's
+     flow — below the hero, above the partners band — so it lives in that
+     composition instead of floating above every page. */
   if (SHOW_SITE_ONLY && active) {
-    return (
-      <>
-        <NoticeStrip />
-        {active.render()}
-      </>
-    );
+    return <>{active.render()}</>;
   }
 
   if (!active) {

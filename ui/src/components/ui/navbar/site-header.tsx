@@ -2,10 +2,12 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useSiteContent } from '@/lib/content';
 import { LiquidMetalButton } from '@/components/ui/liquid-metal-button';
 import { ContactPopup } from '@/components/ui/contact-popup/contact-popup';
 import { cn } from '@/lib/utils';
@@ -62,6 +64,18 @@ const defaultItems: SiteNavItem[] = [
     ],
   },
 ];
+
+/* Blog is appended after More rather than slotted in beside the other pages, and
+   that placement is load-bearing rather than cosmetic.
+
+   The item only exists when something is published — with no articles the link
+   would lead to an empty page, so it is hidden. But `activeIndex` is a position
+   in this array, used by two dozen call sites. Slotting Blog in at 5 would move
+   Documents, FAQs, Privacy and Terms from 5 to 6 *only while articles existed*,
+   so the highlighted nav item would silently depend on the content. Appending
+   keeps 0-5 fixed whether Blog is there or not. */
+const BLOG_ITEM: SiteNavItem = { label: 'Blog', href: '#blog' };
+export const BLOG_NAV_INDEX = defaultItems.length;
 
 /* The real mark from the live site. The bar is navy in both themes now, so the
    white wordmark is the correct variant throughout — the dark-on-light version
@@ -140,6 +154,15 @@ export const SiteHeader = ({
   showThemeToggle = false,
   className,
 }: SiteHeaderProps) => {
+  /* Blog joins the bar only once something is published — see BLOG_ITEM above
+     for why it is appended rather than slotted in. A caller passing its own
+     `items` is left alone. */
+  const { blogs } = useSiteContent();
+  const navItems = useMemo(
+    () => (items === defaultItems && blogs.length > 0 ? [...items, BLOG_ITEM] : items),
+    [items, blogs.length],
+  );
+
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -268,7 +291,7 @@ export const SiteHeader = ({
             <span className="absolute left-[-30%] top-[3px] h-16 w-[160%] bg-gradient-to-b from-primary/25 to-transparent [clip-path:polygon(6%_100%,26%_0,74%_0,94%_100%)]" />
           </span>
 
-          {items.map((item, index) => {
+          {navItems.map((item, index) => {
             const isActive = index === activeIndex;
             const isOpen = openIndex === index;
 
@@ -427,7 +450,7 @@ export const SiteHeader = ({
           </div>
 
           <nav className="flex-1 overflow-y-auto p-3" aria-label="Mobile">
-            {items.map((item, index) => (
+            {navItems.map((item, index) => (
               <div key={item.label} className="py-0.5">
                 <a
                   href={item.href}

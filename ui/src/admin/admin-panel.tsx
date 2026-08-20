@@ -6,7 +6,9 @@
   panel simply reacts to a 401 by showing the login form again.
 */
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError, checkSession, login, logout } from './api';
+import {
+  ApiError, checkSession, getStorage, login, logout, UPLOAD_EVENT, type StorageUsage,
+} from './api';
 import { Banner, Button, Card, Field, Input } from './admin-ui';
 import { PropertiesAdmin } from './properties-admin';
 import { NoticesAdmin } from './notices-admin';
@@ -20,6 +22,56 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'notices', label: 'Notices' },
   { id: 'blogs', label: 'Articles' },
 ];
+
+const formatBytes = (n: number) => {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
+  if (n < 1024 * 1024 * 1024) return `${(n / 1024 / 1024).toFixed(1)} MB`;
+  return `${(n / 1024 / 1024 / 1024).toFixed(2)} GB`;
+};
+
+/*
+  Photograph storage, so the owner can see the ceiling coming rather than
+  discovering it when an upload fails.
+
+  Renders nothing at all when blob storage is not configured — locally, or on a
+  deploy before the store exists. A meter that cannot measure anything is worse
+  than no meter.
+*/
+function StorageMeter() {
+  const [usage, setUsage] = useState<StorageUsage | null>(null);
+
+  const refresh = useCallback(() => {
+    getStorage()
+      .then(setUsage)
+      .catch(() => setUsage({ available: false }));
+  }, []);
+
+  useEffect(() => {
+    refresh();
+    window.addEventListener(UPLOAD_EVENT, refresh);
+    return () => window.removeEventListener(UPLOAD_EVENT, refresh);
+  }, [refresh]);
+
+  if (!usage?.available) return null;
+
+  const pct = Math.min(100, (usage.usedBytes / usage.limitBytes) * 100);
+  const bar = pct >= 90 ? 'bg-destructive' : pct >= 75 ? 'bg-amber-500' : 'bg-foreground';
+
+  return (
+    <div className="flex min-w-40 flex-col gap-1" title={`${usage.fileCount} files stored`}>
+      <div className="flex items-baseline justify-between gap-3 text-[11px] text-muted-foreground">
+        <span>Photo storage</span>
+        <span>
+          {formatBytes(usage.usedBytes)} / {formatBytes(usage.limitBytes)}
+        </span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div className={`h-full rounded-full transition-all ${bar}`} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
 
 function LoginScreen({ onDone }: { onDone: () => void }) {
   const [password, setPassword] = useState('');
@@ -126,7 +178,8 @@ export function AdminPanel() {
               ))}
             </nav>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            <StorageMeter />
             <Button
               variant="ghost"
               onClick={() => {

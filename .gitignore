@@ -20,6 +20,10 @@ admin/include/dbc.php.local
 # compiled API, produced by `npm run selfcheck`
 .selfcheck/
 
+# local test harness — compiled API and the in-process database
+.local-api/
+.local-db/
+
 # local env for `vercel dev` — never commit DATABASE_URL or the admin hash
 .env
 .env.local

@@ -1,5 +1,5 @@
 /* The articles index and a single article, both inside the site chrome. */
-import { SiteHeader } from '@/components/ui/navbar/site-header';
+import { BLOG_NAV_INDEX, SiteHeader } from '@/components/ui/navbar/site-header';
 import { SiteFooter } from '@/components/sections/footer/site-footer';
 import { Markdown } from './markdown';
 import { useBlogPost, useSiteContent, type BlogSummary } from '@/lib/content';
@@ -15,7 +15,7 @@ const formatDate = (iso: string | null) =>
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh scroll-smooth bg-background">
-      <SiteHeader />
+      <SiteHeader activeIndex={BLOG_NAV_INDEX} />
       {children}
       <SiteFooter />
     </div>
