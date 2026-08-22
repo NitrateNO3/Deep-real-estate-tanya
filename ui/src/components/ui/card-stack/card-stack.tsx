@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AnimatePresence, motion, useMotionValue, useTransform } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,11 @@ export type CardStackProps = {
   className?: string;
   /** Frame shape. Master plans are wider than they are tall. */
   aspect?: string;
+  /**
+   * Fires when the front card is clicked rather than dragged. Given the index
+   * of that card in `cards`. Omit and the pile stays drag-only.
+   */
+  onCardOpen?: (index: number) => void;
 };
 
 /* Stack geometry. Each card behind the front one steps down, shrinks and dims,
@@ -34,7 +39,12 @@ const SPRING = { type: 'spring' as const, stiffness: 170, damping: 26 };
  * page section — unlike a demo — the interaction has to be reachable without a
  * pointer.
  */
-export const CardStack = ({ cards: initialCards, className, aspect = 'aspect-[4/3]' }: CardStackProps) => {
+export const CardStack = ({
+  cards: initialCards,
+  className,
+  aspect = 'aspect-[4/3]',
+  onCardOpen,
+}: CardStackProps) => {
   const [cards, setCards] = useState<StackCard[]>(initialCards);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState<'up' | 'down' | null>(null);
@@ -42,6 +52,18 @@ export const CardStack = ({ cards: initialCards, className, aspect = 'aspect-[4/
 
   const dragY = useMotionValue(0);
   const rotateX = useTransform(dragY, [-200, 0, 200], [15, 0, -15]);
+
+  /* A drag ends in a click event too, so the two have to be told apart or
+     every swipe would also open the card. Anything past a few pixels is a
+     drag; below that it was a press that happened to wobble. */
+  const movedRef = useRef(false);
+  const DRAG_SLOP = 4;
+
+  /** The card currently on top, as an index into the caller's own array. */
+  const openFront = () => {
+    if (movedRef.current || !onCardOpen) return;
+    onCardOpen(index);
+  };
 
   const next = () => {
     setCards((prev) => [...prev.slice(1), prev[0]]);
@@ -82,7 +104,8 @@ export const CardStack = ({ cards: initialCards, className, aspect = 'aspect-[4/
                   key={card.id}
                   className="absolute h-full w-full overflow-hidden rounded-2xl border bg-card shadow-[0_18px_44px_-24px_rgb(0_0_0/0.45)]"
                   style={{
-                    cursor: isFront ? 'grab' : 'auto',
+                    // a pile you can open says so with the pointer
+                    cursor: isFront ? (onCardOpen ? 'pointer' : 'grab') : 'auto',
                     touchAction: 'none',
                     rotateX: isFront ? rotateX : 0,
                     transformPerspective: 1000,
@@ -99,8 +122,29 @@ export const CardStack = ({ cards: initialCards, className, aspect = 'aspect-[4/
                   drag={isFront ? 'y' : false}
                   dragConstraints={{ top: 0, bottom: 0 }}
                   dragElastic={0.7}
-                  onDrag={(_, info) => isFront && dragY.set(info.offset.y)}
+                  onPointerDown={() => {
+                    movedRef.current = false;
+                  }}
+                  onDrag={(_, info) => {
+                    if (!isFront) return;
+                    if (Math.abs(info.offset.y) > DRAG_SLOP) movedRef.current = true;
+                    dragY.set(info.offset.y);
+                  }}
                   onDragEnd={handleDragEnd}
+                  onClick={() => isFront && openFront()}
+                  /* Reachable without a pointer: the pile is a list of maps and
+                     the front one is a control, so it takes a role, a label and
+                     Enter/Space. Dragging is invisible to assistive tech. */
+                  role={isFront && onCardOpen ? 'button' : undefined}
+                  tabIndex={isFront && onCardOpen ? 0 : undefined}
+                  aria-label={isFront && onCardOpen ? `Open ${card.title} full size` : undefined}
+                  onKeyDown={(e) => {
+                    if (!isFront || !onCardOpen) return;
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onCardOpen(index);
+                    }
+                  }}
                   whileDrag={isFront ? { zIndex: cards.length + 1, cursor: 'grabbing', scale: 1.03 } : {}}
                   onHoverStart={() => isFront && setShowInfo(true)}
                   onHoverEnd={() => setShowInfo(false)}

@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { StarButton } from '@/components/ui/star-button';
 import { CardStack, type StackCard } from '@/components/ui/card-stack/card-stack';
+import { Lightbox } from '@/components/ui/image-gallery/lightbox';
 import { useIsDark } from '@/lib/use-is-dark';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +30,7 @@ export type MapsSectionProps = {
 const defaultMaps: MapCard[] = [
   {
     id: 'gurgaon-master-plan',
-    name: 'Gurgaon Master Plan',
+    name: 'Gurugram Master Plan',
     detail: 'Sector zoning · land use',
     image: '/img/maps/gurgaon-master-plan.jpg',
   },
@@ -57,7 +59,7 @@ const defaultMaps: MapCard[] = [
 export const MapsSection = ({
   eyebrow = 'Maps & Master Plans',
   heading = 'Explore sectors and master plans before you invest',
-  lede = 'Access master plans for Gurgaon, Manesar, Dharuhera and Sohna, plus HUDA sector maps, DLF phases, Sushant Lok, Vatika, South City and dozens of builder projects — all in one organized library.',
+  lede = 'Access master plans for Gurugram, Manesar and Dharuhera, plus HUDA sector maps, DLF phases, Sushant Lok, South City and dozens of builder projects — all in one organized library.',
   maps = defaultMaps,
   ctaLabel = 'Explore all maps',
   ctaHref = '#maps-page',
@@ -65,6 +67,16 @@ export const MapsSection = ({
   className,
 }: MapsSectionProps) => {
   const isDark = useIsDark();
+
+  /* Clicking a plan opens it full size, in the same lightbox the Maps page
+     uses — a master plan is unreadable at deck size, so a card you cannot open
+     is a picture of a map rather than a map. */
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const lightboxItems = maps.map((m) => ({
+    name: m.detail ? `${m.name} — ${m.detail}` : m.name,
+    thumb: m.image,
+    full: m.image,
+  }));
 
   const cards: StackCard[] = maps.map((m) => ({
     id: m.id,
@@ -120,10 +132,27 @@ export const MapsSection = ({
 
           {/* ------------------------------------------------------- deck */}
           <div className="min-w-0">
-            <CardStack cards={cards} aspect="aspect-[4/3]" className="mx-auto max-w-[520px]" />
+            <CardStack
+              cards={cards}
+              aspect="aspect-[4/3]"
+              className="mx-auto max-w-[520px]"
+              onCardOpen={setOpenIndex}
+            />
+            {/* The pile affords dragging, not opening — this says the second
+                thing, the way the Maps page says it. */}
+            <p className="mt-3 text-center text-[13px] text-muted-foreground">
+              Tap a plan to open it full size · drag to shuffle
+            </p>
           </div>
         </div>
       </div>
+
+      <Lightbox
+        items={lightboxItems}
+        index={openIndex}
+        onClose={() => setOpenIndex(null)}
+        onIndexChange={setOpenIndex}
+      />
     </section>
   );
 };

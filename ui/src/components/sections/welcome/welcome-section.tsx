@@ -4,9 +4,9 @@ import { StarButton } from '@/components/ui/star-button';
 import { useIsDark } from '@/lib/use-is-dark';
 
 const defaultGallery = [
-  { src: '/img/welcome.jpg', alt: 'A bright living space in a Gurgaon residence' },
+  { src: '/img/welcome.jpg', alt: 'A bright living space in a Gurugram residence' },
   { src: '/img/props/p1.jpg', alt: 'Entrance of a residence in DLF Phase 5' },
-  { src: '/img/props/p3.jpg', alt: 'Interior corridor of a Gurgaon apartment' },
+  { src: '/img/props/p3.jpg', alt: 'Interior corridor of a Gurugram apartment' },
   { src: '/img/props/p4.jpg', alt: 'Commercial floor plate in Cyber City' },
   { src: '/img/props/p6.jpg', alt: 'Residential plot in Sector 57' },
 ];
@@ -38,6 +38,19 @@ export type WelcomeSectionProps = {
    * it is the photograph that people end up looking at.
    */
   videoPoster?: string;
+  /**
+   * Run the footage full-bleed behind the whole section instead of inside a
+   * frame beside the copy, held back under a wash so the copy stays readable.
+   *
+   * The frame version cannot show a 16:9 clip at the height of a viewport-tall
+   * row without either cropping it hard or leaving the row half empty. As a
+   * backdrop the clip has the whole section to fill, and the space to the
+   * right of the copy — which the frame was competing for — becomes the part
+   * of it you actually see.
+   *
+   * Only applies when `videoSrc` is set; the still gallery keeps its frame.
+   */
+  backdrop?: boolean;
   /** Milliseconds between automatic advances. */
   interval?: number;
   /** Put the picture on the left instead of the right. */
@@ -76,15 +89,16 @@ export const WelcomeSection = ({
      the position above the headline more than a geography does. */
   eyebrow = 'Local Expertise · Trusted Guidance · Better Real Estate Decisions',
   // Deliberate break: "Welcome to" is the greeting, the name is the statement.
-  heading = 'Welcome to\nDeep Realestate',
-  lead = 'With over two decades of experience in Gurgaon’s real estate market, Deep Real Estate is built on trust, transparency, and long-term relationships. Founded by Pawan Yadav, we help clients buy, sell, and invest in premium residential and commercial properties across Gurgaon.',
+  heading = 'Welcome to\nDeep Real Estate',
+  lead = 'With over two decades of experience in Gurugram’s real estate market, Deep Real Estate is built on trust, transparency, and long-term relationships. Founded by Pawan Yadav, we help clients buy, sell, and invest in premium residential and commercial properties across Gurugram.',
   trustTitle = 'Licensed & transparent',
-  trustNote = 'Serving Gurgaon since 2005',
+  trustNote = 'Serving Gurugram since 2005',
   imageSrc,
   imageAlt = '',
   images = defaultGallery,
   videoSrc = '/video/hero.mp4',
   videoPoster,
+  backdrop = false,
   interval = 3000,
   reverse = false,
   showActions = true,
@@ -148,31 +162,81 @@ export const WelcomeSection = ({
     return () => el.removeEventListener('canplay', start);
   }, [videoSrc]);
 
+  // Only the footage can be a backdrop; the gallery keeps its frame and rail.
+  const asBackdrop = Boolean(videoSrc) && backdrop;
+
   return (
     <section
       className={cn(
-        'relative w-full overflow-hidden bg-background',
+        'relative isolate w-full overflow-hidden bg-background',
         fill && 'lg:h-full lg:min-h-0',
         className,
       )}
     >
+      {asBackdrop && (
+        <>
+          <video
+            ref={videoRef}
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
+            src={videoSrc}
+            /* A poster here, unlike in the framed version: full-bleed, the
+               alternative to a still is a blank screen the height of the
+               viewport for as long as the first bytes take to arrive. */
+            poster={videoPoster ?? '/img/bg/hero-poster.jpg'}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            tabIndex={-1}
+          />
+          {/* Legibility wash. Weighted across rather than evenly: the copy is
+              dark-on-light and sits left, so that side has to go nearly opaque,
+              while the right — which is the part of the clip anyone actually
+              looks at — keeps far more of it. An even veil at the strength the
+              text needs would have hidden the whole thing. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(255,255,255,0.96)_0%,rgba(255,255,255,0.92)_30%,rgba(255,255,255,0.70)_58%,rgba(255,255,255,0.45)_100%)] dark:bg-[linear-gradient(90deg,rgba(8,21,31,0.96)_0%,rgba(8,21,31,0.92)_30%,rgba(8,21,31,0.72)_58%,rgba(8,21,31,0.50)_100%)]"
+          />
+          {/* Softens the top and bottom edges into the header and whatever
+              follows, so the clip does not end on a hard line. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(255,255,255,0.55)_0%,transparent_18%,transparent_82%,rgba(255,255,255,0.65)_100%)] dark:bg-[linear-gradient(180deg,rgba(8,21,31,0.55)_0%,transparent_18%,transparent_82%,rgba(8,21,31,0.75)_100%)]"
+          />
+        </>
+      )}
       <div
         className={cn(
           'mx-auto max-w-[1400px] px-5 sm:px-8',
           fill ? 'py-12 lg:h-full lg:py-10' : 'py-16 sm:py-24 lg:py-28',
         )}
       >
+        {/* An explicit fraction rather than 12 columns: the split that suits
+            this row falls between two column boundaries, and rounding it to
+            the nearest one cost the picture more width than the copy could
+            usefully take. The picture holds the 1fr track; reversing swaps
+            which side that track is on. */}
         <div
           className={cn(
-            'grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-stretch lg:gap-x-12',
+            'grid grid-cols-1 gap-10 lg:items-stretch lg:gap-x-10',
+            // as a backdrop there is no second column to size — the copy keeps
+            // its own measure and the clip fills everything to the right of it
+            asBackdrop
+              ? 'lg:grid-cols-1'
+              : reverse
+                ? 'lg:grid-cols-[1fr_36%]'
+                : 'lg:grid-cols-[36%_1fr]',
             fill && 'lg:h-full lg:min-h-0',
           )}
         >
           {/* ---------------------------------------------------------- text */}
           <div
             className={cn(
-              'flex flex-col justify-center lg:col-span-6',
-              reverse ? 'lg:order-2 lg:col-start-7' : 'lg:order-1 lg:col-start-1',
+              'flex flex-col justify-center',
+              reverse ? 'lg:order-2' : 'lg:order-1',
             )}
           >
             {/* one shared measure keeps every line flush to the same right edge */}
@@ -230,26 +294,43 @@ export const WelcomeSection = ({
           </div>
 
           {/* ------------------------------------------------------- picture */}
-          <figure
-            className={cn(
-              'lg:col-span-6',
-              reverse ? 'lg:order-1 lg:col-start-1' : 'lg:order-2 lg:col-start-7',
-            )}
-          >
+          {!asBackdrop && (
+          <figure className={cn(reverse ? 'lg:order-1' : 'lg:order-2')}>
             {/* h-full matters: the main frame below uses lg:h-full, and without
                 a definite height on every ancestor it resolves to auto and the
                 picture collapses to nothing. */}
             <div className="relative h-full">
               {/* Main frame + vertical rail on the plain page background. */}
               <div
-                className="relative flex h-full gap-4"
+                className={cn(
+                  'relative flex h-full gap-4',
+                  // the footage frame is shorter than the column, so centre it
+                  videoSrc && 'items-center',
+                )}
                 onMouseEnter={() => (paused.current = true)}
                 onMouseLeave={() => (paused.current = false)}
               >
                 {/* main frame — the video, or all stills stacked and crossfaded.
                     On white the frame needs its own border and shadow to have
                     an edge. */}
-                <div className="relative aspect-[4/3] min-w-0 flex-1 overflow-hidden rounded-2xl border bg-muted shadow-[0_24px_56px_-28px_rgb(0_0_0/0.35)] lg:aspect-auto lg:h-full">
+                {/* The still gallery stretches to the column's full height — a
+                    photograph crops to any shape without losing its subject.
+                    The footage cannot: filling a viewport-height column with a
+                    16:9 source would crop it to a vertical slot through the
+                    middle.
+                    So the video keeps its own 16:9 and the column carries the
+                    leftover height. This frame briefly tightened to 3/2 on wide
+                    screens to fill more of the row, which was fine for footage
+                    with a centred subject — but the clip here runs a line of
+                    services from edge to edge, and cropping 8% off each side
+                    started eating the first and last words of it. Height is
+                    worth less than the copy the client put in the frame. */}
+                <div
+                  className={cn(
+                    'relative min-w-0 flex-1 overflow-hidden rounded-2xl border bg-muted shadow-[0_24px_56px_-28px_rgb(0_0_0/0.35)]',
+                    videoSrc ? 'aspect-video' : 'aspect-[4/3] lg:aspect-auto lg:h-full',
+                  )}
+                >
                   {videoSrc ? (
                     <video
                       ref={videoRef}
@@ -326,6 +407,7 @@ export const WelcomeSection = ({
               </div>
             </div>
           </figure>
+          )}
         </div>
       </div>
     </section>

@@ -36,11 +36,11 @@ export type AboutMissionProps = {
 const defaultPillars: Pillar[] = [
   {
     label: 'Our mission',
-    body: 'To help our clients make wise and profitable property decisions in Gurgaon — guiding every buyer and seller toward outcomes that genuinely serve their goals.',
+    body: 'To help our clients make wise and profitable property decisions in Gurugram — guiding every buyer and seller toward outcomes that genuinely serve their goals.',
   },
   {
     label: 'Our vision',
-    body: 'To stay the firm Gurgaon families and investors call first, and to be judged as much by the deals we advised against as by the ones we closed.',
+    body: 'To stay the firm Gurugram families and investors call first, and to be judged as much by the deals we advised against as by the ones we closed.',
   },
   {
     label: 'Our promise',
@@ -95,7 +95,7 @@ export const AboutMission = ({
   beliefs = defaultBeliefs,
   partnersEyebrow = 'Partner developers',
   partnersHeading = 'Trusted developer network',
-  partnersLede = "We work with Gurgaon's leading developers to bring you the widest choice of quality projects.",
+  partnersLede = "We work with Gurugram's leading developers to bring you the widest choice of quality projects.",
   partners = defaultPartners,
   ctaLine = "Let's find your next property",
   ctaNote = 'Talk to a licensed advisor today — no commission on free support.',
@@ -202,6 +202,13 @@ export const AboutMission = ({
 
           {/* partner developers */}
           <div className="group/panel min-w-0 overflow-hidden rounded-2xl border bg-card shadow-[0_20px_48px_-26px_rgb(0_0_0/0.35)] transition-all duration-500 hover:border-primary/40 hover:shadow-[0_26px_56px_-26px_rgb(0_128_198/0.45)]">
+            {/* Empty `partners` drops the wall and its heading, leaving the
+                panel as the closing ask alone. The About page uses that: the
+                developer marquee runs immediately above this section, and the
+                same sixteen logos twice on one scroll is not twice the
+                argument. */}
+            {partners.length > 0 && (
+              <>
             <div className="px-6 pb-5 pt-6 sm:px-7">
               <div className="flex items-center gap-3">
                 <span className="h-px w-8 bg-primary" />
@@ -253,8 +260,16 @@ export const AboutMission = ({
                 </li>
               ))}
             </ul>
+              </>
+            )}
 
-            <div className="flex flex-wrap items-center justify-between gap-4 px-6 pb-6 pt-5 sm:px-7">
+            <div
+              className={cn(
+                'flex flex-wrap items-center justify-between gap-4 px-6 pb-6 sm:px-7',
+                // nothing above it to sit under when the wall is off
+                partners.length > 0 ? 'pt-5' : 'pt-6',
+              )}
+            >
               <div className="min-w-0">
                 <p className="text-[17px] font-semibold tracking-tight text-foreground">
                   {ctaLine}

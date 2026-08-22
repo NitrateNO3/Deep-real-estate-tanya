@@ -15,11 +15,11 @@ export type AboutWhyProps = {
 const defaultPoints: WhyPoint[] = [
   {
     title: '20+ Years of Experience',
-    body: 'Established in 2005 with extensive experience in Gurgaon real estate.',
+    body: 'Established in 2005 with extensive experience in Gurugram real estate.',
   },
   {
-    title: 'Gurgaon Market Expertise',
-    body: 'Deep knowledge of Gurgaon’s established and emerging locations.',
+    title: 'Gurugram Market Expertise',
+    body: 'Deep knowledge of Gurugram’s established and emerging locations.',
   },
   {
     title: 'Trusted Relationships',

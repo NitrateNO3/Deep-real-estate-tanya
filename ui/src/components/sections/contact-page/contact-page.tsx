@@ -49,6 +49,19 @@ const MailIcon = ({ className }: { className?: string }) => (
 const MAP_IMAGE = '/img/maps/head-office.webp';
 
 /**
+ * Where "Open in Maps" goes.
+ *
+ * Deliberately not built from the address printed on this page. The two are
+ * written differently — the printed one reads "Sushant Lok-II Extn., …
+ * 122002", the Google listing reads "Block G, Sushant Lok 2, … 122011" — so
+ * searching the printed text does not reliably resolve to the office's own
+ * listing. This is the listing's own wording, which does. The plus code
+ * C3GR+88 Gurugram is the same point if it ever needs checking against a map.
+ */
+const MAP_QUERY =
+  'Deep Real Estate, Ground Floor, G-564, Block G, Sushant Lok 2, Sector 57, Gurugram, Haryana 122011';
+
+/**
  * Contact page.
  *
  * The hero band carries a map of the head office as its backdrop, held well
@@ -57,7 +70,7 @@ const MAP_IMAGE = '/img/maps/head-office.webp';
  */
 export const ContactPage = ({
   address = DEFAULT_ADDRESS,
-  phones = ['+91-124-4080100', '9810922338'],
+  phones = ['0124-4080100', '9810922338'],
   emails = ['info@deeprealestate.in'],
   heading = 'Contact us',
   lede = 'We are happy to answer questions about a sector, a project or a price. Call the office, write to us, or leave your details below and we will come back to you.',
@@ -65,7 +78,7 @@ export const ContactPage = ({
   className,
 }: ContactPageProps) => {
   const [contactOpen, setContactOpen] = useState(false);
-  const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAP_QUERY)}`;
 
   return (
     <div className={cn('w-full bg-background', className)}>

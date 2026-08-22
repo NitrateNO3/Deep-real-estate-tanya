@@ -95,7 +95,7 @@ export type FaqsProps = {
 export const Faqs = ({
   items = faqItems,
   heading = 'Frequently Asked Questions',
-  lede = 'The questions we are asked most often about selling, buying and registering property in Gurgaon.',
+  lede = 'The questions we are asked most often about selling, buying and registering property in Gurugram.',
   contactHref = '#contact-page',
   className,
 }: FaqsProps) => {
@@ -169,7 +169,7 @@ export const Faqs = ({
         <p className="mt-5 text-muted-foreground">
           Can’t find what you’re looking for? Talk to our{' '}
           <a href={contactHref} className="font-medium text-primary hover:underline">
-            Gurgaon office
+            Gurugram office
           </a>
         </p>
       </div>

@@ -1,6 +1,6 @@
 import { SiteHeader } from '@/components/ui/navbar/site-header';
 import { WelcomeSection } from '@/components/sections/welcome/welcome-section';
-import { BrandsSection } from '@/components/sections/brands/brands-section';
+import { GurugramSection } from '@/components/sections/gurugram/gurugram-section';
 import { MapsSection } from '@/components/sections/maps/maps-section';
 import { StatsBand } from '@/components/sections/stats/stats-band';
 import { PropertiesSection } from '@/components/sections/properties/properties-section';
@@ -24,7 +24,7 @@ export const Standalone = () => (
 /**
  * The full home page — seven screens.
  *   1 · header + welcome
- *   2 · ask about property
+ *   2 · Gurugram, corridor by corridor
  *   3 · maps + stats strip
  *   4 · featured & top properties
  *   5 · reviews
@@ -44,6 +44,11 @@ export const HomePage = () => (
         <SiteHeader activeIndex={0} />
       </div>
       <div className="lg:min-h-0 lg:flex-1">
+        {/* Framed, not `backdrop`. The clip is a title card — it carries the
+            firm's own logo and a line of services across its full width — so
+            running it behind the copy put a second "Deep Real Estate" beside
+            the heading and pushed its services line through the trust badge.
+            A card needs an edge. */}
         <WelcomeSection fill />
       </div>
     </section>
@@ -55,7 +60,7 @@ export const HomePage = () => (
     <NoticeStrip />
 
     <section className="lg:h-dvh">
-      <BrandsSection fill />
+      <GurugramSection fill />
     </section>
 
     <section className="flex flex-col lg:min-h-dvh">
@@ -82,7 +87,7 @@ export const HomePage = () => (
         Sized to its content — a band, not a screen. */}
     <section>
       <IndexCta
-        heading="Ready to buy or sell in Gurgaon?"
+        heading="Ready to buy or sell in Gurugram?"
         body="Get free, no-commission assistance from a licensed team."
         ctaLabel="Get in touch"
         ctaHref="#contact-page"

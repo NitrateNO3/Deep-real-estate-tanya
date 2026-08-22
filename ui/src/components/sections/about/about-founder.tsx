@@ -19,7 +19,7 @@ export type AboutFounderProps = {
 
 const defaultParagraphs = [
   'With a vision to build a real estate business based on trust, integrity, and genuine relationships, Pawan Yadav founded Deep Real Estate in 2005.',
-  'His understanding of the Gurgaon market and commitment to client satisfaction continue to shape the firm’s approach today.',
+  'His understanding of the Gurugram market and commitment to client satisfaction continue to shape the firm’s approach today.',
 ];
 
 /** tel: and wa.me both want digits; wa.me additionally wants no leading +. */

@@ -152,7 +152,7 @@ export const MapsPage = ({ sections = mapSections, className }: MapsPageProps) =
             </p>
           </div>
           <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-[3.25rem]">
-            Every map of Gurgaon, in one place
+            Every map of Gurugram, in one place
           </h1>
           <p className="mt-5 max-w-2xl text-[17px] leading-[1.65] text-white/75">
             Master plans, DLF phases, HUDA sectors and builder projects — down to plot numbers.

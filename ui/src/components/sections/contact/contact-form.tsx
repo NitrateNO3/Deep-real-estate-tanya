@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { LiquidMetalButton } from '@/components/ui/liquid-metal-button';
 import { GlassCard } from '@/components/ui/glass-card/glass-card';
+import { FormSuccessDialog } from '@/components/ui/form-success-dialog/form-success-dialog';
 import { cn } from '@/lib/utils';
 
 export type ContactValues = {
@@ -116,6 +117,14 @@ export type ContactFormProps = {
    * is a lead; a lead that reaches a browser console is not.
    */
   endpoint?: string;
+  /**
+   * Where enquiries are emailed, via FormSubmit. Either the inbox address or —
+   * better — the FormSubmit alias that stands in for it. Takes precedence over
+   * `endpoint`.
+   *
+   * See FORMSUBMIT_TARGET below for why the alias is worth the extra step.
+   */
+  emailTo?: string;
   /** Office WhatsApp number for the fallback. Digits and + only. */
   whatsapp?: string;
   /** Fewer message rows, for viewport-height layouts. */
@@ -137,6 +146,64 @@ export type ContactFormProps = {
  * emailid, subject, message — so wiring it to the existing endpoint is a
  * one-to-one mapping rather than a re-spec.
  */
+/* ===========================================================================
+   EMAIL DELIVERY — FormSubmit. Enquiries arrive as email in the inbox named
+   between the quotes below.
+
+   ACTIVATION: the very first submission does not deliver. FormSubmit replies
+   to that inbox with a confirmation link instead; open it once and every
+   submission from then on lands normally. Send one test enquiry yourself
+   after deploying, or the first real lead is the one that gets spent on it.
+
+   SWAP THIS FOR THE ALIAS once activated. FormSubmit issues a random-string
+   endpoint that delivers to the same inbox without naming it — it is in the
+   activation email. It matters here: this bundle is public and the repo is
+   public, so an address written in plain text is scraped and spammed. The
+   alias reads the same to the code and gives a spammer nothing.
+
+   Leave it empty and the form keeps handing enquiries to WhatsApp instead;
+   nothing breaks either way.
+   =========================================================================== */
+const FORMSUBMIT_TARGET = 'deeprealestate.responses@gmail.com';
+
+/* The /ajax/ endpoint answers with JSON rather than redirecting to FormSubmit's
+   own thank-you page, so the visitor stays on the site and sees the form's own
+   confirmation. */
+const formsubmitEndpoint = (target: string) =>
+  `https://formsubmit.co/ajax/${encodeURIComponent(target)}`;
+
+/* FormSubmit turns the JSON keys into the labels in the email body, so the
+   payload is written for someone reading it on a phone rather than for the
+   database column names the form fields carry. Keys prefixed with _ are
+   FormSubmit's own settings and are not printed. */
+const composeEmailPayload = (v: ContactValues) => ({
+  _subject: `New enquiry — ${v.subject || 'Website'} — ${v.fullname}`,
+  // a table reads far better than FormSubmit's default run-on list
+  _template: 'table',
+  // no captcha page: an AJAX post cannot show one, and it would block the send
+  _captcha: 'false',
+  // replying in Gmail then goes straight back to the enquirer
+  _replyto: v.emailid || undefined,
+  /* Receipt for the enquirer, sent by FormSubmit to the address above. Plain
+     text — FormSubmit does not render HTML here, so markup would arrive as
+     literal tags. Deliberately promises only what the office can keep: that
+     it arrived and roughly when someone will reply. */
+  _autoresponse: `Thank you for contacting Deep Real Estate.
+
+We have received your enquiry and someone from our team will get back to you shortly. We reply within about 15 minutes between 9am and 10pm.
+
+If it is urgent, call us on +91-9810922338 and we will take the details over the phone.
+
+— Deep Real Estate, Gurugram`,
+  Name: v.fullname,
+  Mobile: v.mobileno,
+  Email: v.emailid || '—',
+  'Enquiry about': v.subject || '—',
+  'Property type': v.propertytype || '—',
+  Location: v.location || '—',
+  Message: v.message || '—',
+});
+
 /** The enquiry as a WhatsApp message, for the no-endpoint fallback. */
 const composeMessage = (v: ContactValues) =>
   [
@@ -156,6 +223,7 @@ const composeMessage = (v: ContactValues) =>
 export const ContactForm = ({
   onSubmit,
   endpoint,
+  emailTo = FORMSUBMIT_TARGET,
   whatsapp = '+91-9810922338',
   compact = false,
   variant = 'card',
@@ -164,8 +232,17 @@ export const ContactForm = ({
   const glass = variant === 'glass';
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
+  /* A submit lock. Deliberately a ref and not a `status === 'sending'` check:
+     two fast clicks on Send can both enter this handler before React re-renders
+     with the new status, so each would post its own copy and one enquiry would
+     arrive as two emails. A ref updates synchronously, so the second click sees
+     the lock the first one set. The button has no disabled state of its own. */
+  const sending = useRef(false);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (sending.current) return;
+    sending.current = true;
     const form = e.currentTarget;
     const fd = new FormData(form);
     const values: ContactValues = {
@@ -180,19 +257,37 @@ export const ContactForm = ({
 
     onSubmit?.(values);
 
-    if (endpoint) {
+    /* Email first when a target is configured, then any custom endpoint, then
+       WhatsApp. Each rung down is still a real delivery — the form never
+       silently drops a lead. */
+    const target = emailTo ? formsubmitEndpoint(emailTo) : endpoint;
+
+    if (target) {
       setStatus('sending');
       try {
-        const res = await fetch(endpoint, {
+        const res = await fetch(target, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(values),
+          body: JSON.stringify(emailTo ? composeEmailPayload(values) : values),
         });
+        /* FormSubmit can answer 200 while still refusing the send — an
+           unactivated inbox is the common one. The HTTP status alone is not
+           proof the mail went, so read the body: a lead reported as sent but
+           never delivered is the failure this whole path exists to prevent.
+           `success` comes back as the *string* "true", not a boolean. */
         if (!res.ok) throw new Error(String(res.status));
+        if (emailTo) {
+          const body = await res.json().catch(() => null);
+          const ok = body && (body.success === true || body.success === 'true');
+          if (!ok) throw new Error((body && body.message) || 'rejected');
+        }
         form.reset();
         setStatus('sent');
       } catch {
         setStatus('error');
+      } finally {
+        // released only once the post has settled, so the lock spans the request
+        sending.current = false;
       }
       return;
     }
@@ -205,6 +300,7 @@ export const ContactForm = ({
     window.open(wa, '_blank', 'noopener,noreferrer');
     form.reset();
     setStatus('sent');
+    sending.current = false;
   };
 
   /* Filled fields with a real border read as "type here"; hairline outlines
@@ -357,29 +453,11 @@ export const ContactForm = ({
             fontSize={compact ? 14 : 15}
           />
 
-          {/* The form used to say nothing at all on submit — no confirmation,
-              no error, fields left full. aria-live so it is announced rather
-              than only seen. */}
+          {/* Success is the dialog below, not a note here: on a phone this sits
+              well below the fold and the visitor saw nothing happen. Failure
+              stays inline and next to the button — an error belongs beside the
+              form you still have to deal with, not behind a dismissal. */}
           <div aria-live="polite">
-            {status === 'sent' && (
-              <p
-                className={cn(
-                  'mt-3 flex items-start gap-2.5 rounded-xl border px-4 py-3 text-[14px] leading-snug',
-                  glass
-                    ? 'border-emerald-300/40 bg-emerald-400/15 text-white'
-                    : 'border-emerald-200 bg-emerald-50 text-emerald-900',
-                )}
-              >
-                <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m5 13 4 4L19 7" />
-                </svg>
-                <span>
-                  Thank you — your enquiry is on its way. We reply within about 15 minutes
-                  between 9am and 10pm.
-                </span>
-              </p>
-            )}
-
             {status === 'error' && (
               <p
                 className={cn(
@@ -405,6 +483,22 @@ export const ContactForm = ({
           </div>
         </div>
       </form>
+
+      {/* Closing it returns the form to idle, so a second enquiry from the same
+          visitor starts clean rather than re-opening the dialog. */}
+      <FormSuccessDialog
+        open={status === 'sent'}
+        onClose={() => setStatus('idle')}
+        phone={whatsapp}
+        /* The receipt email only goes out when FormSubmit is carrying the
+           enquiry. On the WhatsApp fallback there is no address to send it to,
+           so the dialog must not claim one was sent. */
+        blurb={
+          emailTo
+            ? 'We have sent a confirmation to your email. Someone from our team replies within about 15 minutes, between 9am and 10pm.'
+            : 'Someone from our team replies within about 15 minutes, between 9am and 10pm.'
+        }
+      />
     </Shell>
   );
 };

@@ -48,7 +48,7 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 
 const DEFAULT_LINES: ContactLine[] = [
   { number: '+91-9810922338', label: 'Mobile', note: 'Fastest — the desk that answers first', whatsapp: true },
-  { number: '+91-124-4080100', label: 'Landline', note: 'The office line' },
+  { number: '0124-4080100', label: 'Landline', note: 'The office line' },
   { number: '+91-9599639738', label: 'Free support', note: 'Paperwork, registry and dues', whatsapp: true },
 ];
 

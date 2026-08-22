@@ -137,12 +137,13 @@ export const SiteFooter = ({
               />
             </a>
             <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.16em] text-sky-300/70">
-              Gurgaon · Since 2005
+              Gurugram · Since 2005
             </p>
 
             <p className="mt-5 max-w-sm text-sm leading-[1.7] text-white/70">
-              Residential and commercial property across Gurgaon&apos;s sectors and DLF phases —
-              matched to your budget, your location and your timeline.
+              Residential and commercial property across all of Gurugram&apos;s HUDA sectors
+              and private developer colonies — matched to your taste, your budget, your
+              location and your timeline.
             </p>
 
             {/* No profile URLs yet, so these are marks rather than links.

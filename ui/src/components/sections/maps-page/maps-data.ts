@@ -1,6 +1,23 @@
-/* Extracted from the live site's /maps/ page. Section order and contents
-   match it exactly. `thumb` is the ~1024w variant used in the grid;
-   `full` is the largest available, used by the lightbox. */
+/* The map library, served from our own /public/img/maps-library.
+
+   These were previously hotlinked from the old WordPress site at
+   deeprealestate.in/wp-content/uploads/. That domain now serves this very
+   SPA, and its catch-all returns index.html for every path — so each <img>
+   was fetching a 637-byte HTML document with a 200 status instead of a JPEG,
+   and the whole page rendered blank with nothing in the console to explain it.
+
+   The originals came from admin/assets/maps (the pre-WordPress site), resized
+   into two tiers: `thumb` is 600w for the grid, `full` is 2000w for the
+   lightbox — legible enough to read plot numbers without shipping the 2MB
+   originals.
+
+   Sohna Masterplan was recovered from the Wayback Machine — it is the only
+   one of the missing maps the crawler ever captured.
+
+   Fifteen maps from the old page have no surviving source and are omitted:
+   DLF 5, Alameda and Garden City; Sushant LOK 4; Vatika 1-5; and Anant RAJ,
+   Bptp Amstoria, Emerald Floors, Raheja, Palam Vihar, Ireo City.
+   Add the file to both tiers and the entry here to bring one back. */
 
 export type MapItem = { name: string; thumb: string; full: string };
 export type MapSection = { title: string; maps: MapItem[] };
@@ -11,23 +28,23 @@ export const mapSections: MapSection[] = [
     "maps": [
       {
         "name": "Masterplan",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/MASTERPLAN-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/MASTERPLAN-scaled.jpg"
+        "thumb": "/img/maps-library/grid/master-plans-masterplan.jpg",
+        "full": "/img/maps-library/full/master-plans-masterplan.jpg"
       },
       {
         "name": "Manesar",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/MANESAR-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/MANESAR-scaled.jpg"
+        "thumb": "/img/maps-library/grid/master-plans-manesar.jpg",
+        "full": "/img/maps-library/full/master-plans-manesar.jpg"
       },
       {
         "name": "Dharuhera",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DHARUHERA-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DHARUHERA-scaled.jpg"
+        "thumb": "/img/maps-library/grid/master-plans-dharuhera.jpg",
+        "full": "/img/maps-library/full/master-plans-dharuhera.jpg"
       },
       {
         "name": "Sohna Masterplan",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/SOHNA_MASTERPLAN-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/SOHNA_MASTERPLAN-scaled.jpg"
+        "thumb": "/img/maps-library/grid/master-plans-sohna-masterplan.jpg",
+        "full": "/img/maps-library/full/master-plans-sohna-masterplan.jpg"
       }
     ]
   },
@@ -36,38 +53,23 @@ export const mapSections: MapSection[] = [
     "maps": [
       {
         "name": "DLF 1",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_1-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_1-scaled.jpg"
+        "thumb": "/img/maps-library/grid/dlf-dlf-1.jpg",
+        "full": "/img/maps-library/full/dlf-dlf-1.jpg"
       },
       {
         "name": "DLF 2",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_2-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_2-scaled.jpg"
+        "thumb": "/img/maps-library/grid/dlf-dlf-2.jpg",
+        "full": "/img/maps-library/full/dlf-dlf-2.jpg"
       },
       {
         "name": "DLF 3",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_3-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_3-scaled.jpg"
+        "thumb": "/img/maps-library/grid/dlf-dlf-3.jpg",
+        "full": "/img/maps-library/full/dlf-dlf-3.jpg"
       },
       {
         "name": "DLF 4",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_4-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_4-scaled.jpg"
-      },
-      {
-        "name": "DLF 5",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_5-1024x686.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_5-scaled.jpg"
-      },
-      {
-        "name": "DLF Alameda",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_ALAMEDA-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_ALAMEDA-scaled.jpg"
-      },
-      {
-        "name": "DLF Garden City",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_GARDEN_CITY-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/DLF_GARDEN_CITY-scaled.jpg"
+        "thumb": "/img/maps-library/grid/dlf-dlf-4.jpg",
+        "full": "/img/maps-library/full/dlf-dlf-4.jpg"
       }
     ]
   },
@@ -76,173 +78,173 @@ export const mapSections: MapSection[] = [
     "maps": [
       {
         "name": "Sector 4 & 7",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_4__7-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_4__7-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-4-and-7.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-4-and-7.jpg"
       },
       {
         "name": "Sector 5",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_5-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_5-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-5.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-5.jpg"
       },
       {
         "name": "Sector 7 Ext.",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_7_EXT-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_7_EXT-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-7-ext.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-7-ext.jpg"
       },
       {
         "name": "Sector 7",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_7-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/06/SECTOR_7-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-7.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-7.jpg"
       },
       {
         "name": "Sector 9",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_9-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_9-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-9.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-9.jpg"
       },
       {
         "name": "Sector 9A",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_9A-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_9A-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-9a.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-9a.jpg"
       },
       {
         "name": "Sector 10",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_10-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_10-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-10.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-10.jpg"
       },
       {
         "name": "Sector 10A",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_10A-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_10A-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-10a.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-10a.jpg"
       },
       {
         "name": "Sector 12A",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_12A-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_12A-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-12a.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-12a.jpg"
       },
       {
         "name": "Sector 14",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_14-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_14-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-14.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-14.jpg"
       },
       {
         "name": "Sector 15",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_15-1-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_15-1-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-15.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-15.jpg"
       },
       {
         "name": "Sector 15",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_15-2-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_15-2-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-15-2.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-15-2.jpg"
       },
       {
         "name": "Sector 17",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_17-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_17-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-17.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-17.jpg"
       },
       {
         "name": "Sector 21",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_21-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_21-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-21.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-21.jpg"
       },
       {
         "name": "Sector 22",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_22-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_22-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-22.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-22.jpg"
       },
       {
         "name": "Sector 23",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_23-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_23-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-23.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-23.jpg"
       },
       {
         "name": "Sector 23A",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_23A-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_23A-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-23a.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-23a.jpg"
       },
       {
         "name": "Sector 27 & 28",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_27__28-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_27__28-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-27-and-28.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-27-and-28.jpg"
       },
       {
         "name": "Sector 29",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_29-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_29-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-29.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-29.jpg"
       },
       {
         "name": "Sector 31 & 32a",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_31__32a-1-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_31__32a-1-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-31-and-32a.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-31-and-32a.jpg"
       },
       {
         "name": "Sector 31",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_31-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_31-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-31.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-31.jpg"
       },
       {
         "name": "Sector 32,33,34",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_323334-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_323334-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-32-33-34.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-32-33-34.jpg"
       },
       {
         "name": "Sector 34",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_34-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_34-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-34.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-34.jpg"
       },
       {
         "name": "Sector 38",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_38-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_38-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-38.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-38.jpg"
       },
       {
         "name": "Sector 39",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_39-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_39-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-39.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-39.jpg"
       },
       {
         "name": "Sector 40",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_40-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_40-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-40.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-40.jpg"
       },
       {
         "name": "Sector 43",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_43-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_43-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-43.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-43.jpg"
       },
       {
         "name": "Sector 44",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_44-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_44-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-44.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-44.jpg"
       },
       {
         "name": "Sector 45",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_45-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_45-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-45.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-45.jpg"
       },
       {
         "name": "Sector 46",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_46-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_46-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-46.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-46.jpg"
       },
       {
         "name": "Sector 47",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_47-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_47-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-47.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-47.jpg"
       },
       {
         "name": "Sector 51",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_51-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_51-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-51.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-51.jpg"
       },
       {
         "name": "Sector 52",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_52-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_52-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-52.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-52.jpg"
       },
       {
         "name": "Sector 57",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_57-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SECTOR_57-scaled.jpg"
+        "thumb": "/img/maps-library/grid/huda-sectors-sector-57.jpg",
+        "full": "/img/maps-library/full/huda-sectors-sector-57.jpg"
       }
     ]
   },
@@ -251,23 +253,18 @@ export const mapSections: MapSection[] = [
     "maps": [
       {
         "name": "Sushant LOK 1",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_1-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_1-scaled.jpg"
+        "thumb": "/img/maps-library/grid/sushant-lok-sushant-lok-1.jpg",
+        "full": "/img/maps-library/full/sushant-lok-sushant-lok-1.jpg"
       },
       {
         "name": "Sushant LOK 2",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_2-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_2-scaled.jpg"
+        "thumb": "/img/maps-library/grid/sushant-lok-sushant-lok-2.jpg",
+        "full": "/img/maps-library/full/sushant-lok-sushant-lok-2.jpg"
       },
       {
         "name": "Sushant LOK 3",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_3-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_3-scaled.jpg"
-      },
-      {
-        "name": "Sushant LOK 4",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_4-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SUSHANT_LOK_4-scaled.jpg"
+        "thumb": "/img/maps-library/grid/sushant-lok-sushant-lok-3.jpg",
+        "full": "/img/maps-library/full/sushant-lok-sushant-lok-3.jpg"
       }
     ]
   },
@@ -276,43 +273,13 @@ export const mapSections: MapSection[] = [
     "maps": [
       {
         "name": "South City 2",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SOUTH_CITY_2-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SOUTH_CITY_2-scaled.jpg"
+        "thumb": "/img/maps-library/grid/south-city-south-city-2.jpg",
+        "full": "/img/maps-library/full/south-city-south-city-2.jpg"
       },
       {
         "name": "South City 1",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SOUTH_CITY_1-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SOUTH_CITY_1-scaled.jpg"
-      }
-    ]
-  },
-  {
-    "title": "Vatika",
-    "maps": [
-      {
-        "name": "Vatika 1",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_1-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_1-scaled.jpg"
-      },
-      {
-        "name": "Vatika 2",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_2-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_2-scaled.jpg"
-      },
-      {
-        "name": "Vatika 3",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_3-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_3-scaled.jpg"
-      },
-      {
-        "name": "Vatika 4",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_4-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_4-scaled.jpg"
-      },
-      {
-        "name": "Vatika 5",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_5-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/VATIKA_5-scaled.jpg"
+        "thumb": "/img/maps-library/grid/south-city-south-city-1.jpg",
+        "full": "/img/maps-library/full/south-city-south-city-1.jpg"
       }
     ]
   },
@@ -320,79 +287,49 @@ export const mapSections: MapSection[] = [
     "title": "Builder Projects",
     "maps": [
       {
-        "name": "Anant RAJ",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/ANANT_RAJ-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/ANANT_RAJ-scaled.jpg"
-      },
-      {
-        "name": "Bptp Amstoria",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/BPTP_AMSTORIA-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/BPTP_AMSTORIA-scaled.jpg"
-      },
-      {
-        "name": "Emerald Floors",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/EMERALD_FLOORS-1024x715.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/EMERALD_FLOORS-scaled.jpg"
-      },
-      {
         "name": "Greenwood City",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/GREENWOOD_CITY-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/GREENWOOD_CITY-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-greenwood-city.jpg",
+        "full": "/img/maps-library/full/builder-projects-greenwood-city.jpg"
       },
       {
         "name": "Malibu Town",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/MALIBU_TOWN-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/MALIBU_TOWN-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-malibu-town.jpg",
+        "full": "/img/maps-library/full/builder-projects-malibu-town.jpg"
       },
       {
         "name": "Mayfield Garden",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/MAYFIELD_GARDEN-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/MAYFIELD_GARDEN-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-mayfield-garden.jpg",
+        "full": "/img/maps-library/full/builder-projects-mayfield-garden.jpg"
       },
       {
         "name": "Nirvana",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/NIRVANA-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/NIRVANA-scaled.jpg"
-      },
-      {
-        "name": "Raheja",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/RAHEJA-1024x683.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/RAHEJA-scaled.jpg"
-      },
-      {
-        "name": "Palam Vihar",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/PALAM_VIHAR-1024x263.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/PALAM_VIHAR-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-nirvana.jpg",
+        "full": "/img/maps-library/full/builder-projects-nirvana.jpg"
       },
       {
         "name": "Rosewood City",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/ROSEWOOD_CITY-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/ROSEWOOD_CITY-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-rosewood-city.jpg",
+        "full": "/img/maps-library/full/builder-projects-rosewood-city.jpg"
       },
       {
         "name": "Saraswati Vihar",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SARASWATI_VIHAR-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SARASWATI_VIHAR-scaled.jpg"
-      },
-      {
-        "name": "Ireo City",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/IREO_CITY-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/IREO_CITY-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-saraswati-vihar.jpg",
+        "full": "/img/maps-library/full/builder-projects-saraswati-vihar.jpg"
       },
       {
         "name": "Suncity",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/SUNCITY-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/SUNCITY-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-suncity.jpg",
+        "full": "/img/maps-library/full/builder-projects-suncity.jpg"
       },
       {
         "name": "Uppal Southend",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/UPPAL_SOUTHEND-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/UPPAL_SOUTHEND-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-uppal-southend.jpg",
+        "full": "/img/maps-library/full/builder-projects-uppal-southend.jpg"
       },
       {
         "name": "Vipul World",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/VIPUL_WORLD-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/VIPUL_WORLD-scaled.jpg"
+        "thumb": "/img/maps-library/grid/builder-projects-vipul-world.jpg",
+        "full": "/img/maps-library/full/builder-projects-vipul-world.jpg"
       }
     ]
   },
@@ -401,18 +338,18 @@ export const mapSections: MapSection[] = [
     "maps": [
       {
         "name": "Pace City 1",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/PACE_CITY_1-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/PACE_CITY_1-scaled.jpg"
+        "thumb": "/img/maps-library/grid/udyog-vihar-pace-city-1.jpg",
+        "full": "/img/maps-library/full/udyog-vihar-pace-city-1.jpg"
       },
       {
         "name": "Pace City 2",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/PACE_CITY_2-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/PACE_CITY_2-scaled.jpg"
+        "thumb": "/img/maps-library/grid/udyog-vihar-pace-city-2.jpg",
+        "full": "/img/maps-library/full/udyog-vihar-pace-city-2.jpg"
       },
       {
         "name": "Udyog Vihar",
-        "thumb": "https://deeprealestate.in/wp-content/uploads/2023/07/UDYOG_VIHAR-1024x684.jpg",
-        "full": "https://deeprealestate.in/wp-content/uploads/2023/07/UDYOG_VIHAR-scaled.jpg"
+        "thumb": "/img/maps-library/grid/udyog-vihar-udyog-vihar.jpg",
+        "full": "/img/maps-library/full/udyog-vihar-udyog-vihar.jpg"
       }
     ]
   }

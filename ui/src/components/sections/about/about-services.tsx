@@ -78,8 +78,8 @@ const icons: Record<string, React.ReactNode> = {
  */
 export const AboutServices = ({
   eyebrow = 'Our Services',
-  heading = 'Real Estate Solutions, Tailored to You.',
-  lede = 'Buying, selling, investing or letting — whatever you need to do with property in Gurgaon, it starts with one of these four.',
+  heading = 'Buying, selling, investing or letting.',
+  lede = 'Four ways to move with property in Gurugram. Start with the one that’s right for you.',
   items = defaultItems,
   ctaLabel = 'Talk to us about it',
   ctaHref = '#contact-page',

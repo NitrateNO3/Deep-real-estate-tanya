@@ -11,6 +11,7 @@ import * as StatsDemos from '@/components/sections/stats/stats-band.demo';
 import * as ContactDemos from '@/components/sections/contact/contact-section.demo';
 import * as LiquidMetalDemos from '@/components/ui/liquid-metal-button/liquid-metal-button.demo';
 import * as BrandsDemos from '@/components/sections/brands/brands-section.demo';
+import * as GurugramDemos from '@/components/sections/gurugram/gurugram-section.demo';
 import * as FooterDemos from '@/components/sections/footer/site-footer.demo';
 import * as AboutDemos from '@/components/sections/about/about-page.demo';
 import * as MapsPageDemos from '@/components/sections/maps-page/maps-page.demo';
@@ -89,9 +90,16 @@ export function buildRegistry(
   {
     id: 'home-brands',
     group: 'Home page',
-    name: '2 · Ask about property',
+    name: 'Developers marquee — now on the About page',
     layout: 'full',
     render: () => <BrandsDemos.Standalone />,
+  },
+  {
+    id: 'home-gurugram',
+    group: 'Home page',
+    name: '2 · Gurugram, corridor by corridor',
+    layout: 'full',
+    render: () => <GurugramDemos.Fill />,
   },
   {
     id: 'home-maps',

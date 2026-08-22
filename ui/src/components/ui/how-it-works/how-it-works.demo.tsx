@@ -26,7 +26,7 @@ export const OurProcess = () => (
         },
         {
           title: 'Choose Location',
-          description: 'Pick your preferred sector or locality across the Gurgaon market.',
+          description: 'Pick your preferred sector or locality across the Gurugram market.',
           colorTheme: 'orange',
         },
         {

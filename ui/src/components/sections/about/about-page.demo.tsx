@@ -8,6 +8,7 @@ import { AboutWhy } from './about-why';
 import { AboutServices } from './about-services';
 import { AboutFounder } from './about-founder';
 import { AboutMission } from './about-mission';
+import { BrandsSection } from '@/components/sections/brands/brands-section';
 
 /** Section 1 on its own. */
 export const Intro = () => (
@@ -27,14 +28,17 @@ export const Mission = () => (
 
 /**
  * The About Us page.
- *   nav → breadcrumb → intro → why us → services → founder → mission → footer
+ *   nav → breadcrumb → intro → why us → founder → services → mission → footer
  *
  * Scrolls normally, same as every other page — screens are still sized to the
  * viewport, but nothing snaps the scroll to their boundaries.
  *
  * The order is the firm's own argument, in the order it makes it: who we are,
- * why us, what we do, who is behind it — and only then the mission and the
- * developer network, which are context rather than claims.
+ * why us, who is behind it, what we do — and only then the mission and the
+ * developer network, which are context rather than claims. The founder sits
+ * directly after the case for the firm because he is the answer to it: the
+ * reason to trust the claims above is the person who has been making good on
+ * them since 2005.
  */
 export const AboutPage = () => (
   <div className="min-h-dvh scroll-smooth bg-background">
@@ -69,15 +73,26 @@ export const AboutPage = () => (
       <AboutWhy />
     </section>
     <section>
-      <AboutServices />
-    </section>
-    <section>
       <AboutFounder />
     </section>
     <section>
+      <AboutServices />
+    </section>
+    {/* The developer marquee, moved off the home page. A wall of other firms'
+        names is a claim about this firm, so it belongs on the page that makes
+        the firm's case — and it sets up the mission statement directly under
+        it. Sized to its content: on the home page it held a full screen, but
+        here it is one band in a longer argument. */}
+    <section>
+      <BrandsSection />
+    </section>
+    <section>
       {/* beliefs off: "Why Deep Real Estate?" above already answers this, in
-          the firm's own words rather than in four generic claims. What is left
-          here is the mission, the developer network and the closing ask. */}
+          the firm's own words rather than in four generic claims.
+          The logo mosaic stays. It repeats the marquee above deliberately —
+          the marquee is motion you watch go past, the mosaic is the full set
+          held still next to the closing ask, where someone checking for a
+          particular developer can actually find it. */}
       <AboutMission beliefs={[]} />
     </section>
     <section>

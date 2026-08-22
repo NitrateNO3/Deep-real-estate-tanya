@@ -143,7 +143,7 @@ const ChevronDown = ({ className }: { className?: string }) => (
 export const SiteHeader = ({
   items = defaultItems,
   brand,
-  phone = '+91-124-4080100',
+  phone = '0124-4080100',
   /* Was "Sell Your Property", which spoke to half the people who arrive here.
      It no longer navigates — it opens the numbers, because both buying and
      selling start with a phone call. */
