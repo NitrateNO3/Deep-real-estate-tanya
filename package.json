@@ -16,7 +16,7 @@
     "dev:local": "npm run dev:build-api && node scripts/dev-server.mjs"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.4",
+    "@neondatabase/serverless": "^1.1.0",
     "@vercel/blob": "^2.8.0"
   },
   "devDependencies": {
