@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { registry } from './registry';
+import { buildRegistry } from './registry';
+import { useSiteContent } from './lib/content';
+import { AdminPanel } from './admin/admin-panel';
 
 type Theme = 'light' | 'dark';
 
@@ -19,6 +21,13 @@ const params = new URLSearchParams(window.location.search);
 const SHOW_SITE_ONLY = params.has('full') || (import.meta.env.PROD && !params.has('sandbox'));
 
 export default function App() {
+  /* Listings and articles come from the database, and a property's page only
+     exists because the registry has an entry for it — so the registry is
+     rebuilt whenever that content changes. Until the first fetch returns this
+     is the set the site shipped with. */
+  const { properties, blogs } = useSiteContent();
+  const registry = useMemo(() => buildRegistry(properties, blogs), [properties, blogs]);
+
   // Initial theme can be forced with ?theme=dark so a preview link is shareable.
   const [theme, setTheme] = useState<Theme>(() =>
     new URLSearchParams(window.location.search).get('theme') === 'dark' ? 'dark' : 'light',
@@ -71,10 +80,18 @@ export default function App() {
       map.set(entry.group, list);
     }
     return [...map.entries()];
-  }, []);
+  }, [registry]);
 
   const active = registry.find((e) => e.id === activeId) ?? registry[0];
 
+  /* The owner's panel. Deliberately outside the registry and the sandbox
+     chrome: it is not part of the site, and it must not appear in the sidebar
+     as something browsable. Access is decided by the API, not by this branch. */
+  if (activeId === 'admin') return <AdminPanel />;
+
+  /* The notice ticker is no longer rendered here. It belongs in the home page's
+     flow — below the hero, above the partners band — so it lives in that
+     composition instead of floating above every page. */
   if (SHOW_SITE_ONLY && active) {
     return <>{active.render()}</>;
   }

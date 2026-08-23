@@ -16,3 +16,17 @@ admin/include/dbc.php.local
 
 # static-export build workspace
 .static-build-tmp/
+
+# compiled API, produced by `npm run selfcheck`
+.selfcheck/
+
+# local test harness — compiled API and the in-process database
+.local-api/
+.local-db/
+
+# local env for `vercel dev` — never commit DATABASE_URL or the admin hash.
+# Glob rather than the two literal names: .env.production / .env.staging and
+# friends were not covered before, and a missed one is a leaked credential.
+.env*
+!.env.example
+.vercel/

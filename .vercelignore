@@ -1,0 +1,36 @@
+# Files that are not part of the deployed site.
+#
+# Vercel uploads the whole repository before building. The legacy PHP app is
+# ~258 MB of it and none of it is served — `outputDirectory` is ui/dist, so only
+# the React build and the /api functions ever reach a visitor. Excluding it makes
+# deploys markedly faster and keeps the old source out of the build entirely.
+#
+# Nothing in ui/ or api/ references these paths. The two mentions of
+# "admin/assets" and "Contact_Us.php" in ui/src are comments explaining where a
+# design came from, not imports.
+
+# The previous PHP application
+admin/
+oldWebsite/
+include/
+others/
+tools/
+assets/
+*.php
+style.css
+
+# Pre-rendered snapshot of the old site, built from fake data
+static/
+
+# Local test harness — an in-process database and the API compiled for it.
+# scripts/ is included here too: nothing on Vercel executes it, so uploading the
+# dev server (which carries a fixed development password) is needless surface.
+scripts/
+.local-api/
+.local-db/
+.selfcheck/
+
+# Design/source files that are not web assets
+*.cdr
+README.md
+ADMIN.md

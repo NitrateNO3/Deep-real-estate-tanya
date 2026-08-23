@@ -18,7 +18,11 @@ import * as MapsPageDemos from '@/components/sections/maps-page/maps-page.demo';
 import * as ContactPageDemos from '@/components/sections/contact-page/contact-page.demo';
 import * as DocumentsPageDemos from '@/components/sections/documents-page/documents-page.demo';
 import * as PropertiesPageDemos from '@/components/sections/properties-page/properties-page.demo';
-import { allProperties, propertyPageId } from '@/components/sections/properties/properties-data';
+import {
+  allProperties, propertyPageId, type PropertyDetail,
+} from '@/components/sections/properties/properties-data';
+import { BlogArticlePage, BlogIndexPage, blogPageId } from '@/components/sections/blog/blog-pages';
+import type { BlogSummary } from '@/lib/content';
 import * as HowItWorksDemos from '@/components/ui/how-it-works/how-it-works.demo';
 import * as FaqsDemos from '@/components/sections/faqs/faqs-section.demo';
 import * as ReviewsDemos from '@/components/sections/reviews/reviews-section.demo';
@@ -47,7 +51,21 @@ export type PreviewEntry = {
   2. Create  src/components/ui/<folder>/<component>.demo.tsx  exporting demos
   3. Import it above and add an entry below. That's it.
 */
-export const registry: PreviewEntry[] = [
+/*
+  Built as a function rather than a constant because listings and articles now
+  come from the database. A property's page exists because there is an entry for
+  it here, so the entries must be rebuilt once the fetch returns — otherwise a
+  listing the owner adds through the panel would show on the index and then find
+  no page when clicked.
+
+  Called with no arguments it falls back to the shipped listings, which is what
+  `registry` below is.
+*/
+export function buildRegistry(
+  properties: PropertyDetail[] = allProperties,
+  blogs: Pick<BlogSummary, 'slug' | 'title'>[] = [],
+): PreviewEntry[] {
+  return [
   {
     id: 'home-search',
     group: 'Home page',
@@ -178,12 +196,28 @@ export const registry: PreviewEntry[] = [
      routes on the URL hash and looks the id up here, so this is what makes
      #property-suncity-floors a real page. Add a property to the data and its
      page appears with it. */
-  ...allProperties.map((p) => ({
+  ...properties.map((p) => ({
     id: propertyPageId(p.id),
     group: 'Properties page',
     name: `· ${p.name}`,
     layout: 'full' as const,
     render: PropertiesPageDemos.propertyPage(p),
+  })),
+  {
+    id: 'blog',
+    group: 'Blog',
+    name: 'News & insight — index',
+    layout: 'full' as const,
+    render: () => <BlogIndexPage />,
+  },
+  /* One entry per published article, for the same reason as the properties
+     above: the page has to exist for the link to lead anywhere. */
+  ...blogs.map((post) => ({
+    id: blogPageId(post.slug),
+    group: 'Blog',
+    name: `· ${post.title}`,
+    layout: 'full' as const,
+    render: () => <BlogArticlePage slug={post.slug} />,
   })),
   {
     id: 'how-it-works',
@@ -326,4 +360,8 @@ export const registry: PreviewEntry[] = [
     name: 'Limelight Nav — Customized',
     render: () => <LimelightNavDemos.Customized />,
   },
-];
+  ];
+}
+
+/** The registry as it stands before any data has been fetched. */
+export const registry: PreviewEntry[] = buildRegistry();

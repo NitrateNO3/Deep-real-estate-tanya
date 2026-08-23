@@ -259,34 +259,14 @@ export const WelcomeSection = ({
             {/* the pitch */}
             <p className="mt-7 text-[19px] leading-[1.6] text-foreground/85">{lead}</p>
 
-            {/* Trust badge. Sits directly above the buttons because it is the
-                reassurance you want in hand at the moment you click one. Tinted
-                panel + solid tick so it reads as a stamp, not a third paragraph;
-                inline-flex keeps it hugging its text instead of stretching to
-                the full measure. */}
+            {/* Trust line. This was a tinted panel with a tick, which competed
+                with the buttons underneath it for the same attention. It is a
+                quiet credential, not a call to action, so it now reads as one
+                more line under the pitch. */}
             {(trustTitle || trustNote) && (
-              /* Same gradient surface as <GradientButton>, applied through the
-                 shared class rather than the component: this is a statement,
-                 not a control, so it must not be a <button>. cursor-default
-                 undoes the pointer the class assumes. */
-              <div className="gradient-button mt-8 inline-flex cursor-default items-center gap-3.5 rounded-[11px] py-3 pl-3.5 pr-6 shadow-[0_16px_36px_-24px_rgb(0_0_0/0.9)]">
-                <span
-                  aria-hidden="true"
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-white/15 text-white"
-                >
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m5 13 4 4L19 7" />
-                  </svg>
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-[15px] font-bold leading-tight text-white">
-                    {trustTitle}
-                  </span>
-                  <span className="mt-1 block text-[13px] leading-tight text-white/70">
-                    {trustNote}
-                  </span>
-                </span>
-              </div>
+              <p className="mt-3 text-sm text-foreground/60">
+                {[trustTitle, trustNote].filter(Boolean).join(' · ')}
+              </p>
             )}
 
             {showActions && (

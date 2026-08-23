@@ -7,6 +7,8 @@ import { PropertiesSection } from '@/components/sections/properties/properties-s
 import { ReviewsSection } from '@/components/sections/reviews/reviews-section';
 import { ContactSection } from '@/components/sections/contact/contact-section';
 import { IndexCta } from '@/components/sections/index-cta/index-cta';
+import { NoticeStrip } from '@/components/sections/notices/notice-strip';
+import { RecentArticles } from '@/components/sections/blog/recent-articles';
 import { SiteFooter } from './site-footer';
 
 /** The footer on its own, over a short filler block. */
@@ -51,6 +53,12 @@ export const HomePage = () => (
       </div>
     </section>
 
+    {/* The announcement ticker, between the opening screen and the partners
+        band. NoticeStrip renders null when nothing is live and there is no
+        wrapping <section> here, so with no notice the page has no band, no
+        border and no gap — exactly as if the feature did not exist. */}
+    <NoticeStrip />
+
     <section className="lg:h-dvh">
       <GurugramSection fill />
     </section>
@@ -93,6 +101,11 @@ export const HomePage = () => (
     <section>
       <ReviewsSection />
     </section>
+
+    {/* Recent articles. Renders its own <section> and returns null when nothing
+        is published, so with no articles the reviews band runs straight into
+        contact with no seam. */}
+    <RecentArticles />
 
     <section className="lg:min-h-dvh">
       {/* see contact-page.demo — no PII into the console */}
