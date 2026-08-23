@@ -1,5 +1,6 @@
 <? include 'include/MeecroDB.php';
-if(!isset($_SESSION['mylogin'])){header("location: logout.php");}
+require_once 'include/auth_guard.php';
+auth_require_login();
 ?>
 <!DOCTYPE html>
 <html lang="en">

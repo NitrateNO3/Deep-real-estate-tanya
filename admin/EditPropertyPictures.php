@@ -1,4 +1,6 @@
 <? include 'include/MeecroDB.php';
+require_once 'include/auth_guard.php';
+auth_require_login();
 $get=DB::query("SELECT * from propertyList WHERE pid='$_GET[pid]'")[0];
 ?>
 <!DOCTYPE html>

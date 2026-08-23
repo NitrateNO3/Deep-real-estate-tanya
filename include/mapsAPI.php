@@ -147,8 +147,23 @@ function geocode(request) {
     <div id="map"></div>
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <?php
+      /* The key used to be hard-coded here, in a public repository. A Maps
+         browser key is necessarily visible to anyone who loads the page, so
+         the protection that matters is an HTTP-referrer restriction in the
+         Google Cloud console, not secrecy — but a key committed to git is
+         also usable from anywhere until that restriction exists.
+
+         Reads GOOGLE_MAPS_API_KEY from the environment. The previously
+         committed key must be treated as compromised and rotated. */
+      $maps_key = getenv('GOOGLE_MAPS_API_KEY') ?: '';
+    ?>
+    <?php if ($maps_key !== '') { ?>
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_IgrwwlM0wzE1zPMb2wfV-YpsNuZ-xk8&callback=initMap&v=weekly&channel=2"
+      src="https://maps.googleapis.com/maps/api/js?key=<?= urlencode($maps_key) ?>&callback=initMap&v=weekly&channel=2"
       async
     ></script>
+    <?php } else { ?>
+    <!-- GOOGLE_MAPS_API_KEY is not set; the map is not rendered. -->
+    <?php } ?>
   

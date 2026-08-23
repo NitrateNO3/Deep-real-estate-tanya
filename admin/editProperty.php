@@ -1,4 +1,6 @@
-<? include 'include/MeecroDB.php';?><!DOCTYPE html>
+<? include 'include/MeecroDB.php';
+require_once 'include/auth_guard.php';
+auth_require_login();?><!DOCTYPE html>
 <html lang="en">
     <head>
        

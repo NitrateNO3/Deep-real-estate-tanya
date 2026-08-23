@@ -1,7 +1,7 @@
 <? include '../admin/include/MeecroDB.php';
 $to= $toMail;
 if(isset($_GET['mkey'])){
-    $gh=DB::query("SELECT * FROM maps WHERE map_name LIKE '%$_GET[mkey]%' GROUP BY map_name");
+    $gh=DB::query("SELECT * FROM maps WHERE map_name LIKE %ss GROUP BY map_name", $_GET['mkey']);
     $jk='';$count= DB::count();
     if($count >= 1){ $t=1;
     foreach($gh as $h){
@@ -9,11 +9,11 @@ if(isset($_GET['mkey'])){
                         <div class="featured-properties text-left">
                             <figure class="featured-image">
                                 <a href="MapDetails.php?mid='.$h['mid'].'">
-                                    <img src="admin/assets/maps/thumb/'.$h['thumb_url'].'" alt="'.$h['map_name'].'">
+                                    <img src="admin/assets/maps/thumb/'.htmlspecialchars($h['thumb_url'], ENT_QUOTES).'" alt="'.htmlspecialchars($h['map_name'], ENT_QUOTES).'">
                                     <span class="overlay-1"></span>
                                 </a>
                             </figure>
-                            <h5><a href="MapDetails.php?mid='.$h['mid'].'">'.$h['map_name'].'</a></h5>
+                            <h5><a href="MapDetails.php?mid='.urlencode($h['mid']).'">'.htmlspecialchars($h['map_name'], ENT_QUOTES).'</a></h5>
                         </div>
                     </div>';
        
@@ -21,7 +21,7 @@ if(isset($_GET['mkey'])){
     }
     echo $jk;} else {echo "NO Map Found!!!";}
 } else if(isset($_GET['dockey'])){
-    $gh=DB::query("SELECT * FROM documents WHERE dname LIKE '%$_GET[dockey]%' OR dpath LIKE '%$_GET[dockey]%' GROUP BY dname");
+    $gh=DB::query("SELECT * FROM documents WHERE dname LIKE %ss OR dpath LIKE %ss GROUP BY dname", $_GET['dockey'], $_GET['dockey']);
     $jk='';
     if(DB::count()){ $t=1;
     foreach($gh as $h){
@@ -35,7 +35,7 @@ if(isset($_GET['mkey'])){
     }
     echo $jk;} else {$jk='No Doc found!!';}
 } else if(isset($_GET['getdev'])){
-    $gh=DB::query("SELECT * FROM developers WHERE name LIKE '%$_GET[getdev]%'  ");
+    $gh=DB::query("SELECT * FROM developers WHERE name LIKE %ss", $_GET['getdev']);
     $jk='';
     if(DB::count()){ $t=1;
     foreach($gh as $d){

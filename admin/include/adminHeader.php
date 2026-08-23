@@ -1,5 +1,9 @@
 <? include 'include/MeecroDB.php';
-if(!isset($_SESSION['mylogin'])){header("location: logout.php");}
+/* The previous check here set a Location header but never exited, so the whole
+   admin page was still rendered into the response body — a redirect a client
+   can simply ignore is not access control. auth_require_login() exits. */
+require_once 'include/auth_guard.php';
+auth_require_login();
 ?>
 <!DOCTYPE html>
 <html lang="en">
