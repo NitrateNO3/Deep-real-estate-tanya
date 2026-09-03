@@ -1,19 +1,24 @@
 /* ============================================================================
-   MAP PIN COORDINATES — APPROXIMATE, NOT YET VERIFIED
+   MAP PIN COORDINATES — VERIFIED AGAINST OPENSTREETMAP
    ============================================================================
 
-   Every lat/lng below is a best-estimate centroid for the area, good enough to
-   drop a pin at city zoom. They have NOT been checked against survey data or
-   against Deep Real Estate's own records.
+   Every lat/lng below was looked up against OpenStreetMap (Overpass for the
+   HUDA sector boundaries, Nominatim for the named colonies) — the same data
+   that draws the tiles this page renders, so a pin lands on the label a
+   visitor sees underneath it.
 
-   Before this page goes live, someone who knows Gurgaon should walk this list
-   and correct it. Wrong pins on a property site are worse than no pins — a
-   buyer sent to the wrong side of Golf Course Road will not come back.
+   The previous table was a set of hand-guessed estimates and several were
+   badly wrong: Sushant Lok 2 sat in Sector 47 when it is in Sector 57, and
+   Sectors 21, 22 and 23 sat near the city centre when they are up by the
+   Delhi border. Each entry now carries the sector OSM places it in, so the
+   next person can spot-check a row without re-running the lookups.
+
+   Two rows are marked APPROX — OSM has no feature for them and they are
+   placed inside the correct sector by hand.
 
    Anything without an entry here simply does not get a pin. It still appears
    in search, in the filters and in the library below the map, so the page is
-   complete either way; the map just shows fewer markers until the rest are
-   filled in.
+   complete either way; the map just shows fewer markers.
    ========================================================================= */
 
 /** Legend groups — these are the four pin colours on the map. */
@@ -61,97 +66,90 @@ export const SECTION_KIND: Record<string, { kind: MapKind; type: MapType }> = {
 /* Keyed by the map's `name` exactly as it appears in maps-data.ts. */
 export const MAP_GEO: Record<string, GeoEntry> = {
   // ---------------------------------------------------------- master plans
-  Masterplan: { lat: 28.4595, lng: 77.0266, area: 'Gurugram' },
-  Manesar: { lat: 28.354, lng: 76.937, area: 'Manesar' },
-  Dharuhera: { lat: 28.205, lng: 76.797, area: 'Dharuhera' },
-  'Sohna Masterplan': { lat: 28.247, lng: 77.065, area: 'Sohna' },
+  Masterplan: { lat: 28.4646, lng: 77.0299, area: 'Gurugram' }, // Gurugram city
+  Manesar: { lat: 28.3617, lng: 76.9402, area: 'Manesar' },
+  Dharuhera: { lat: 28.2055, lng: 76.7953, area: 'Dharuhera' },
+  'Sohna Masterplan': { lat: 28.246, lng: 77.0671, area: 'Sohna' },
 
   // ------------------------------------------------------------------ DLF
-  'DLF 1': { lat: 28.47, lng: 77.09, area: 'Gurugram' },
-  'DLF 2': { lat: 28.49, lng: 77.093, area: 'Gurugram' },
-  'DLF 3': { lat: 28.494, lng: 77.098, area: 'Gurugram' },
-  'DLF 4': { lat: 28.464, lng: 77.09, area: 'Gurugram' },
-  'DLF 5': { lat: 28.442, lng: 77.1, area: 'Gurugram' },
-  'DLF Alameda': { lat: 28.392, lng: 77.032, area: 'Gurugram' },
-  'DLF Garden City': { lat: 28.383, lng: 76.982, area: 'Gurugram' },
+  'DLF 1': { lat: 28.4765, lng: 77.0902, area: 'Gurugram' }, // Sector 28
+  'DLF 2': { lat: 28.4839, lng: 77.0846, area: 'Gurugram' }, // Sector 25
+  'DLF 3': { lat: 28.4941, lng: 77.1044, area: 'Gurugram' }, // Sector 24
+  'DLF 4': { lat: 28.4641, lng: 77.0836, area: 'Gurugram' }, // Sector 27
 
   // --------------------------------------------------------- HUDA sectors
-  'Sector 4 & 7': { lat: 28.468, lng: 77.017, area: 'Gurugram' },
-  'Sector 5': { lat: 28.472, lng: 77.021, area: 'Gurugram' },
-  'Sector 7 Ext.': { lat: 28.463, lng: 77.011, area: 'Gurugram' },
-  'Sector 7': { lat: 28.466, lng: 77.013, area: 'Gurugram' },
-  'Sector 9': { lat: 28.453, lng: 77.008, area: 'Gurugram' },
-  'Sector 9A': { lat: 28.449, lng: 77.005, area: 'Gurugram' },
-  'Sector 10': { lat: 28.446, lng: 76.998, area: 'Gurugram' },
-  'Sector 10A': { lat: 28.443, lng: 76.995, area: 'Gurugram' },
-  'Sector 12A': { lat: 28.46, lng: 77.0, area: 'Gurugram' },
-  'Sector 14': { lat: 28.47, lng: 77.033, area: 'Gurugram' },
-  'Sector 15': { lat: 28.465, lng: 77.04, area: 'Gurugram' },
-  'Sector 17': { lat: 28.475, lng: 77.048, area: 'Gurugram' },
-  'Sector 21': { lat: 28.479, lng: 77.057, area: 'Gurugram' },
-  'Sector 22': { lat: 28.483, lng: 77.064, area: 'Gurugram' },
-  'Sector 23': { lat: 28.488, lng: 77.053, area: 'Gurugram' },
-  'Sector 23A': { lat: 28.49, lng: 77.049, area: 'Gurugram' },
-  'Sector 27 & 28': { lat: 28.469, lng: 77.083, area: 'Gurugram' },
-  'Sector 29': { lat: 28.467, lng: 77.073, area: 'Gurugram' },
-  'Sector 31 & 32a': { lat: 28.443, lng: 77.041, area: 'Gurugram' },
-  'Sector 31': { lat: 28.446, lng: 77.043, area: 'Gurugram' },
-  'Sector 32,33,34': { lat: 28.437, lng: 77.034, area: 'Gurugram' },
-  'Sector 34': { lat: 28.433, lng: 77.03, area: 'Gurugram' },
-  'Sector 38': { lat: 28.427, lng: 77.057, area: 'Gurugram' },
-  'Sector 39': { lat: 28.438, lng: 77.053, area: 'Gurugram' },
-  'Sector 40': { lat: 28.445, lng: 77.057, area: 'Gurugram' },
-  'Sector 43': { lat: 28.452, lng: 77.081, area: 'Gurugram' },
-  'Sector 44': { lat: 28.45, lng: 77.074, area: 'Gurugram' },
-  'Sector 45': { lat: 28.443, lng: 77.068, area: 'Gurugram' },
-  'Sector 46': { lat: 28.436, lng: 77.062, area: 'Gurugram' },
-  'Sector 47': { lat: 28.427, lng: 77.048, area: 'Gurugram' },
-  'Sector 51': { lat: 28.427, lng: 77.064, area: 'Gurugram' },
-  'Sector 52': { lat: 28.436, lng: 77.077, area: 'Gurugram' },
-  'Sector 57': { lat: 28.42, lng: 77.08, area: 'Gurugram' },
+  /* Sector centroids from the OSM boundary for each sector. Where a sheet
+     covers more than one sector the pin sits at the midpoint of those. */
+  'Sector 4 & 7': { lat: 28.4706, lng: 77.0123, area: 'Gurugram' },
+  'Sector 5': { lat: 28.4804, lng: 77.0191, area: 'Gurugram' },
+  'Sector 7 Ext.': { lat: 28.4645, lng: 77.0075, area: 'Gurugram' }, // APPROX — west of Sector 7
+  'Sector 7': { lat: 28.4663, lng: 77.0143, area: 'Gurugram' },
+  'Sector 9': { lat: 28.4622, lng: 77.0001, area: 'Gurugram' },
+  'Sector 9A': { lat: 28.469, lng: 76.9963, area: 'Gurugram' },
+  'Sector 10': { lat: 28.454, lng: 77.0025, area: 'Gurugram' },
+  'Sector 10A': { lat: 28.4446, lng: 77.006, area: 'Gurugram' },
+  'Sector 12A': { lat: 28.4701, lng: 77.0315, area: 'Gurugram' },
+  'Sector 14': { lat: 28.4738, lng: 77.0472, area: 'Gurugram' },
+  /* Two Sector 15 sheets, Part I and Part II, share one name — the pin sits
+     between the two OSM boundaries so it is right for both. */
+  'Sector 15': { lat: 28.4572, lng: 77.0418, area: 'Gurugram' },
+  'Sector 17': { lat: 28.4758, lng: 77.0608, area: 'Gurugram' },
+  /* 21, 22, 23 and 23A are the northern sectors by the Delhi border, not the
+     city-centre sectors the old table put them in. */
+  'Sector 21': { lat: 28.5144, lng: 77.073, area: 'Gurugram' },
+  'Sector 22': { lat: 28.5063, lng: 77.0655, area: 'Gurugram' },
+  'Sector 23': { lat: 28.5103, lng: 77.053, area: 'Gurugram' },
+  'Sector 23A': { lat: 28.5057, lng: 77.0463, area: 'Gurugram' },
+  'Sector 27 & 28': { lat: 28.4694, lng: 77.0833, area: 'Gurugram' },
+  'Sector 29': { lat: 28.4669, lng: 77.0671, area: 'Gurugram' },
+  'Sector 31 & 32a': { lat: 28.4499, lng: 77.0455, area: 'Gurugram' },
+  'Sector 31': { lat: 28.454, lng: 77.0497, area: 'Gurugram' },
+  'Sector 32,33,34': { lat: 28.4374, lng: 77.026, area: 'Gurugram' },
+  'Sector 34': { lat: 28.428, lng: 77.0116, area: 'Gurugram' },
+  'Sector 38': { lat: 28.4351, lng: 77.0404, area: 'Gurugram' },
+  'Sector 39': { lat: 28.4424, lng: 77.0505, area: 'Gurugram' },
+  'Sector 40': { lat: 28.45, lng: 77.0577, area: 'Gurugram' },
+  'Sector 43': { lat: 28.4549, lng: 77.0859, area: 'Gurugram' },
+  'Sector 44': { lat: 28.4507, lng: 77.0738, area: 'Gurugram' },
+  'Sector 45': { lat: 28.4449, lng: 77.0664, area: 'Gurugram' },
+  'Sector 46': { lat: 28.4359, lng: 77.0584, area: 'Gurugram' },
+  'Sector 47': { lat: 28.4252, lng: 77.0475, area: 'Gurugram' },
+  'Sector 51': { lat: 28.4287, lng: 77.0667, area: 'Gurugram' },
+  'Sector 52': { lat: 28.4368, lng: 77.0795, area: 'Gurugram' },
+  'Sector 57': { lat: 28.4233, lng: 77.0805, area: 'Gurugram' },
 
   // ---------------------------------------------------------- Sushant Lok
-  'Sushant LOK 1': { lat: 28.466, lng: 77.062, area: 'Gurugram' },
-  'Sushant LOK 2': { lat: 28.427, lng: 77.045, area: 'Gurugram' },
-  'Sushant LOK 3': { lat: 28.423, lng: 77.049, area: 'Gurugram' },
-  'Sushant LOK 4': { lat: 28.419, lng: 77.043, area: 'Gurugram' },
+  'Sushant LOK 1': { lat: 28.4546, lng: 77.0826, area: 'Gurugram' }, // Sector 43
+  'Sushant LOK 2': { lat: 28.4228, lng: 77.0866, area: 'Gurugram' }, // Sector 57
+  'Sushant LOK 3': { lat: 28.4208, lng: 77.0796, area: 'Gurugram' }, // Sector 57
 
   // ----------------------------------------------------------- South City
-  'South City 1': { lat: 28.448, lng: 77.045, area: 'Gurugram' },
-  'South City 2': { lat: 28.41, lng: 77.035, area: 'Gurugram' },
-
-  // --------------------------------------------------------------- Vatika
-  /* Vatika India Next, around Sectors 82-83. The phases sit inside one
-     township, so they cluster — they are not strung out along a line. */
-  'Vatika 1': { lat: 28.3782, lng: 76.9724, area: 'Gurugram' },
-  'Vatika 2': { lat: 28.3751, lng: 76.9689, area: 'Gurugram' },
-  'Vatika 3': { lat: 28.3733, lng: 76.9741, area: 'Gurugram' },
-  'Vatika 4': { lat: 28.3796, lng: 76.9665, area: 'Gurugram' },
-  'Vatika 5': { lat: 28.3717, lng: 76.9702, area: 'Gurugram' },
+  'South City 1': { lat: 28.4597, lng: 77.0612, area: 'Gurugram' }, // Sector 41
+  'South City 2': { lat: 28.417, lng: 77.0488, area: 'Gurugram' }, // Sector 49
 
   // ----------------------------------------------------- builder projects
-  'Anant RAJ': { lat: 28.408, lng: 77.028, area: 'Gurugram' },
-  'Bptp Amstoria': { lat: 28.478, lng: 76.965, area: 'Gurugram' },
-  'Emerald Floors': { lat: 28.443, lng: 77.098, area: 'Gurugram' },
-  'Greenwood City': { lat: 28.44, lng: 77.052, area: 'Gurugram' },
-  'Malibu Town': { lat: 28.409, lng: 77.041, area: 'Gurugram' },
-  'Mayfield Garden': { lat: 28.416, lng: 77.058, area: 'Gurugram' },
-  Nirvana: { lat: 28.435, lng: 77.075, area: 'Gurugram' },
-  Raheja: { lat: 28.398, lng: 77.022, area: 'Gurugram' },
-  'Palam Vihar': { lat: 28.507, lng: 77.032, area: 'Gurugram' },
-  'Rosewood City': { lat: 28.416, lng: 77.032, area: 'Gurugram' },
-  'Saraswati Vihar': { lat: 28.462, lng: 77.048, area: 'Gurugram' },
-  'Ireo City': { lat: 28.404, lng: 77.06, area: 'Gurugram' },
-  Suncity: { lat: 28.452, lng: 77.086, area: 'Gurugram' },
-  'Uppal Southend': { lat: 28.442, lng: 77.031, area: 'Gurugram' },
-  'Vipul World': { lat: 28.412, lng: 77.048, area: 'Gurugram' },
+  'Greenwood City': { lat: 28.4449, lng: 77.0611, area: 'Gurugram' }, // Sector 45
+  'Malibu Town': { lat: 28.4234, lng: 77.0469, area: 'Gurugram' }, // Sector 47
+  'Mayfield Garden': { lat: 28.4275, lng: 77.0609, area: 'Gurugram' }, // Sector 51
+  Nirvana: { lat: 28.4151, lng: 77.0643, area: 'Gurugram' }, // Nirvana Country, Sector 50
+  'Rosewood City': { lat: 28.4102, lng: 77.0545, area: 'Gurugram' }, // Sector 49
+  'Saraswati Vihar': { lat: 28.4772, lng: 77.0833, area: 'Gurugram' }, // Sector 28
+  Suncity: { lat: 28.4351, lng: 77.1106, area: 'Gurugram' }, // Sector 54
+  'Uppal Southend': { lat: 28.4103, lng: 77.0465, area: 'Gurugram' }, // Sector 49
+  'Vipul World': { lat: 28.4128, lng: 77.0345, area: 'Gurugram' }, // Sector 48
 
   // ---------------------------------------------------------- Udyog Vihar
-  'Pace City 1': { lat: 28.498, lng: 77.055, area: 'Gurugram' },
-  'Pace City 2': { lat: 28.492, lng: 77.048, area: 'Gurugram' },
-  'Udyog Vihar': { lat: 28.503, lng: 77.087, area: 'Gurugram' },
+  'Pace City 1': { lat: 28.4397, lng: 77.0109, area: 'Gurugram' },
+  'Pace City 2': { lat: 28.4343, lng: 76.9993, area: 'Gurugram' }, // APPROX — Sector 37 industrial belt
+  'Udyog Vihar': { lat: 28.5002, lng: 77.0807, area: 'Gurugram' }, // Sectors 18-20
+
+  /* Rows removed with this pass: DLF 5, DLF Alameda, DLF Garden City,
+     Sushant LOK 4, Vatika 1-5, Anant RAJ, Bptp Amstoria, Emerald Floors,
+     Raheja, Palam Vihar and Ireo City. None of them has a sheet in
+     maps-data.ts, so none drew a pin, and their coordinates were guesses.
+     Restore a sheet and add a checked coordinate here at the same time. */
 };
 
 /** Where the map opens: Gurugram, wide enough to hold Manesar and Sohna. */
-export const GURGAON_CENTER: [number, number] = [28.4425, 77.03];
+export const GURGAON_CENTER: [number, number] = [28.4425, 77.055];
 export const GURGAON_ZOOM = 12;
