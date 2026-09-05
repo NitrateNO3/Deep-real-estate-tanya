@@ -20,7 +20,7 @@
     "@vercel/blob": "^2.8.0"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.2.17",
+    "@electric-sql/pglite": "^0.5.8",
     "@vercel/node": "^5.0.0",
     "typescript": "^5.7.0"
   }
